@@ -1,1 +1,2 @@
-# walkie_talkie
+# WalkieTalkie
+A WalkieTalkie app
