@@ -22,6 +22,7 @@
         INVALID_PASSWORD,
         FAIL,
         ALREADY_IN_CONTACTS,
+        ITS_YOU,
         ALREADY_IN_ROOM,
         NOT_IN_CONTACTS,
         ALREADY_ENTERED,

@@ -13,7 +13,6 @@ namespace WalkieTalkieServer
             string password = p.ReadString();
             Client client = Program.Server.GetClient(s.Id);
             OutPacket outP = new OutPacket(ServerOperation.SIGN_IN);
-            //outP.WriteShort((short)sizeof(ResponseType));
             if (client.IsConnected)
             {
                 outP.WriteByte((byte)ResponseType.ALREADY_CONNETED);
@@ -57,10 +56,14 @@ namespace WalkieTalkieServer
                 }
             if (Validator.IsValidUsername(username))
                 if (Validator.IsValidPassword(password))
-                    if (client.ExecuteNonQuery($"INSERT INTO users(username,pass) values('{username}','{password}');"))
+                {
+                    long lastId = LastExistingId(client, "id", "users");
+                    long insertedId = client.ExecuteNonQuery($"INSERT INTO users(username,pass) values('{username}','{password}');");
+                    if (lastId == insertedId)
                         outP.WriteByte((byte)ResponseType.SUCCESS);
                     else
                         outP.WriteByte((byte)ResponseType.FAIL);
+                }
                 else
                     outP.WriteByte((byte)ResponseType.INVALID_PASSWORD);
             else
@@ -81,16 +84,26 @@ namespace WalkieTalkieServer
                     s.Send(outP);
                     return;
                 }
+                else if(query.Get<long>("id") == client.Id)
+                {
+                    outP.WriteByte((byte)ResponseType.ITS_YOU);
+                    s.Send(outP);
+                    return;
+                }
                 else
                     contactId = query.Get<long>("id");
             List<long> contacts = GetContacts(client);
             if (contacts.Contains(contactId))
                 outP.WriteByte((byte)ResponseType.ALREADY_IN_CONTACTS);
-            else 
-                if (client.ExecuteNonQuery($"INSERT INTO contacts(userID,contactID) values({client.Id},{contactId});"))
+            else
+            {
+                long lastId = LastExistingId(client, "userID", "contacts");
+                long insertedId = client.ExecuteNonQuery($"INSERT INTO contacts(userID,contactID) values({client.Id},{contactId});");
+                if (lastId == insertedId)
                     outP.WriteByte((byte)ResponseType.SUCCESS);
                 else
                     outP.WriteByte((byte)ResponseType.FAIL);
+            }
             s.Send(outP);
         }
 
@@ -107,17 +120,24 @@ namespace WalkieTalkieServer
                     return;
                 }
             if (Validator.IsValidRoomname(roomname))
-                if (client.ExecuteNonQuery($"INSERT INTO rooms(roomname,adminID) values('{roomname}',{client.Id});"))
+            {
+                long lastId = LastExistingId(client, "id", "rooms");
+                long insertedId = client.ExecuteNonQuery($"INSERT INTO rooms(roomname,adminID) values('{roomname}',{client.Id});");
+                if (lastId == insertedId)
                 {
                     client.CurrRoomId = client.GetLastInsertedId();
                     client.IsAdmin = true;
-                    if(client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{client.Id});"))
+
+                    lastId = LastExistingId(client, "roomID", "participants");
+                    insertedId = client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{client.Id});");
+                    if (lastId == insertedId)
                         outP.WriteByte((byte)ResponseType.SUCCESS);
                     else
                         outP.WriteByte((byte)ResponseType.FAIL);
                 }
                 else
                     outP.WriteByte((byte)ResponseType.FAIL);
+            }
             else
                 outP.WriteByte((byte)ResponseType.INVALID_NAME);
             s.Send(outP);
@@ -157,7 +177,9 @@ namespace WalkieTalkieServer
                 return;
             }
             // Adds the contact to the room
-            if (client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{contactId});"))
+            long lastId = LastExistingId(client, "roomID", "participants");
+            long insertedId = client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{contactId});");
+            if (lastId == insertedId)
                 outP.WriteByte((byte)ResponseType.SUCCESS);
             else
                 outP.WriteByte((byte)ResponseType.FAIL);
@@ -182,10 +204,15 @@ namespace WalkieTalkieServer
                     s.Send(outP);
                     return;
                 }
-            if (client.ExecuteNonQuery($"UPDATE participants SET isEntered={index} WHERE roomID={client.CurrRoomId} AND participantID={client.Id};"))
-                outP.WriteByte((byte)ResponseType.SUCCESS);
-            else
-                outP.WriteByte((byte)ResponseType.FAIL);
+            client.ExecuteNonQuery($"UPDATE participants SET isEntered={index} WHERE roomID={client.CurrRoomId} AND participantID={client.Id};");
+            using (Query query = client.ExecuteQuery($"SELECT isEntered FROM participants WHERE roomID={client.CurrRoomId} AND participantID={client.Id};"))
+            {
+                query.NextRow();
+                if (query.Get<bool>("isEntered") == index)
+                    outP.WriteByte((byte)ResponseType.SUCCESS);
+                else
+                    outP.WriteByte((byte)ResponseType.FAIL);
+            }
             s.Send(outP);
         }
 
@@ -247,6 +274,15 @@ namespace WalkieTalkieServer
                 for (int i = 0; query.NextRow(); i++)
                     participants.Add(query.Get<long>("participantID"));
             return participants;
+        }
+
+        private static long LastExistingId(Client client, string id_column, string table)
+        {
+            using (Query query = client.ExecuteQuery($"SELECT {id_column} FROM {table} ORDER BY LIMIT 1;"))
+            {
+                query.NextRow();
+                return query.Get<long>(id_column);
+            }
         }
 
         #endregion

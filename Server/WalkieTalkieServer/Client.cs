@@ -25,7 +25,7 @@ namespace WalkieTalkieServer
             return m_schema.ExecuteQuery(cmd);
         }
 
-        public bool ExecuteNonQuery(string cmd)
+        public long ExecuteNonQuery(string cmd)
         {
             if (m_schema == null)
                 m_schema = Database.Instance.Connect("walkietalkie");

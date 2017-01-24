@@ -18,13 +18,12 @@ namespace Data
             m_connection.Close();
         }
 
-        public bool ExecuteNonQuery(string command)
+        public long ExecuteNonQuery(string command)
         {
             MySqlCommand cmd = m_connection.CreateCommand();
-            long temp_lasdId = cmd.LastInsertedId;
             cmd.CommandText = command;
             cmd.ExecuteNonQuery();
-            return temp_lasdId < cmd.LastInsertedId;
+            return cmd.LastInsertedId;
         }
 
         public Query ExecuteQuery(string query)
