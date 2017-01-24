@@ -3,31 +3,30 @@ package com.example.anita.walkietalkie;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.view.View.OnClickListener;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ContactsActivity extends Activity implements OnClickListener {
-
-    Button addContactButton;
+public class RoomsActivity extends Activity implements View.OnClickListener {
+    Button createRoomButton;
     ListView contactList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contacts);
+        setContentView(R.layout.activity_rooms);
 
-        addContactButton = (Button) findViewById(R.id.addContact);
-        addContactButton.setOnClickListener(this);
+        createRoomButton = (Button) findViewById(R.id.createRoomButton);
+        createRoomButton.setOnClickListener(this);
 
         contactList = (ListView) findViewById(R.id.contactList);
         final Activity activity = this;
         final Handler handler = new Handler();
         try {
-            Session.getInstance(activity, handler).GetContacts();
+            Session.getInstance(activity, handler).GetRooms();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,10 +40,12 @@ public class ContactsActivity extends Activity implements OnClickListener {
 
         try {
             switch (v.getId()) {
-                case R.id.addContact:
-                    startActivity(new Intent(this, AddContactActivity.class));
+                case R.id.createRoomButton:
+                    //TODO - CreateRoomActivity
+                    //startActivity(new Intent(this, CreateRoomActivity.class));
                     break;
                 case R.id.generalButton:
+                    //TODO - generalActivity
 
                     break;
                 case R.id.roomsButton:
@@ -54,5 +55,5 @@ public class ContactsActivity extends Activity implements OnClickListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-     }
+    }
 }

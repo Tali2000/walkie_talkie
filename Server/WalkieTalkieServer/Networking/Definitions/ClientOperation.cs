@@ -9,6 +9,7 @@
         ADD_PARTICIPANT,
         ALLOW_ENTRANCE,
         CURRENT_ROOM,
-        GET_CONTACTS
+        GET_CONTACTS,
+        GET_ROOMS
     }
 }

@@ -69,6 +69,7 @@ namespace WalkieTalkieServer
             handlers.Add(ClientOperation.ALLOW_ENTRANCE, OperationHandlers.AllowEnterance);
             handlers.Add(ClientOperation.CURRENT_ROOM, OperationHandlers.SetCurrentRoom);
             handlers.Add(ClientOperation.GET_CONTACTS, OperationHandlers.SendContacts);
+            handlers.Add(ClientOperation.GET_ROOMS, OperationHandlers.SendRooms);
         }
     }
 }

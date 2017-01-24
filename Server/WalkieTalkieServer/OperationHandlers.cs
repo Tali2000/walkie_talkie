@@ -240,6 +240,21 @@ namespace WalkieTalkieServer
             s.Send(outP);
         }
 
+        public static void SendRooms(Session s, InPacket p)
+        {
+            Client client = Program.Server.GetClient(s.Id);
+            OutPacket outP = new OutPacket(ServerOperation.GET_ROOMS);
+            List<long> rooms = GetRooms(client);
+            outP.WriteShort((short)rooms.Count);
+            foreach(long roomId in rooms)
+                using (Query query = client.ExecuteQuery($"SELECT roomname FROM rooms WHERE id={roomId};"))
+                {
+                    query.NextRow();
+                    outP.WriteString(query.Get<string>("roomname"));
+                }
+            s.Send(outP);
+        }
+
         #region Helpers
 
         private static void SetClientId(Client client, string username)

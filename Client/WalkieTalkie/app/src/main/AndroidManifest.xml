@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ContactsActivity" />
-        <activity android:name=".AddContactActivity"></activity>
+        <activity android:name=".AddContactActivity" />
+        <activity android:name=".RoomsActivity"></activity>
     </application>
 
 </manifest>

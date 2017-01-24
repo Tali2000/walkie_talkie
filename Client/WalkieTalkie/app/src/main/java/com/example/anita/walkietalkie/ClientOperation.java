@@ -8,7 +8,8 @@ public enum ClientOperation {
     ADDCONTACTTOROOM((byte)4),
     ALLOWNEWROOM((byte)5),
     SENDCURRROOM((byte)6),
-    GETCONTACTS((byte)7);
+    GETCONTACTS((byte)7),
+    GETROOMS((byte)8);
 
     private byte value;
 

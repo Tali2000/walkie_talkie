@@ -9,6 +9,7 @@
         ADD_PARTICIPANT,
         ALLOW_ENTRANCE,
         GET_CONTACTS = 7,
+        GET_ROOMS
     }
 
     public enum ResponseType : byte

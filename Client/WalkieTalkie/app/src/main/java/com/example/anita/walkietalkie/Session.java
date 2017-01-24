@@ -94,4 +94,10 @@ public class Session {
             Send(packet);
         }
     }
+
+    public void GetRooms() throws IOException {
+        try(OutPacket packet = new OutPacket(ClientOperation.GETROOMS)) {
+            Send(packet);
+        }
+    }
 }

@@ -122,7 +122,6 @@ public enum ServerOperation {
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             final short contactsNum = packet.readShort();
             final String[] values = new String[contactsNum];
-            //TODO - activity should be contacts, but it is actually signin
             Short contactLen = 0;
             String username = "";
             for (byte i = 0; i < contactsNum; i++){
@@ -140,6 +139,32 @@ public enum ServerOperation {
                 @Override
                 public void run() {
                 ContactsList contactsList = new ContactsList(activity, values);
+                }
+            });
+        }
+    },
+    GETROOMS(8) {
+        @Override
+        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
+            final short roomsNum = packet.readShort();
+            final String[] values = new String[roomsNum];
+            Short roomLen = 0;
+            String roomname = "";
+            for (byte i = 0; i < roomsNum; i++){
+                try {
+                    roomLen = packet.readShort();
+                    roomname = packet.readString(roomLen);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                values[i] = roomname;
+            }
+            //do it every time
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    RoomsList roomsList = new RoomsList(activity, values);
                 }
             });
         }
