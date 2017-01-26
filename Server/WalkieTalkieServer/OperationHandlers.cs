@@ -2,6 +2,7 @@
 using Common.Networking.Definitions;
 using Data;
 using System.Collections.Generic;
+using WalkieTalkieServer.Networking.Definitions;
 
 namespace WalkieTalkieServer
 {
@@ -59,7 +60,7 @@ namespace WalkieTalkieServer
                 {
                     long lastId = LastExistingId(client, "id", "users");
                     long insertedId = client.ExecuteNonQuery($"INSERT INTO users(username,pass) values('{username}','{password}');");
-                    if (lastId == insertedId)
+                    if (lastId < insertedId)
                         outP.WriteByte((byte)ResponseType.SUCCESS);
                     else
                         outP.WriteByte((byte)ResponseType.FAIL);
@@ -99,7 +100,7 @@ namespace WalkieTalkieServer
             {
                 long lastId = LastExistingId(client, "userID", "contacts");
                 long insertedId = client.ExecuteNonQuery($"INSERT INTO contacts(userID,contactID) values({client.Id},{contactId});");
-                if (lastId == insertedId)
+                if (lastId < insertedId)
                     outP.WriteByte((byte)ResponseType.SUCCESS);
                 else
                     outP.WriteByte((byte)ResponseType.FAIL);
@@ -112,6 +113,7 @@ namespace WalkieTalkieServer
             string roomname = p.ReadString();
             Client client = Program.Server.GetClient(s.Id);
             OutPacket outP = new OutPacket(ServerOperation.CREATE_ROOM);
+            // Checks whether such room already exists
             using (Query query = client.ExecuteQuery($"SELECT id FROM rooms WHERE roomname='{roomname}';"))
                 if (query.NextRow())
                 {
@@ -119,18 +121,19 @@ namespace WalkieTalkieServer
                     s.Send(outP);
                     return;
                 }
+            // Checks whether room's name is valid
             if (Validator.IsValidRoomname(roomname))
             {
                 long lastId = LastExistingId(client, "id", "rooms");
                 long insertedId = client.ExecuteNonQuery($"INSERT INTO rooms(roomname,adminID) values('{roomname}',{client.Id});");
-                if (lastId == insertedId)
+                if (lastId < insertedId)
                 {
                     client.CurrRoomId = client.GetLastInsertedId();
                     client.IsAdmin = true;
 
                     lastId = LastExistingId(client, "roomID", "participants");
                     insertedId = client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{client.Id});");
-                    if (lastId == insertedId)
+                    if (lastId < insertedId)
                         outP.WriteByte((byte)ResponseType.SUCCESS);
                     else
                         outP.WriteByte((byte)ResponseType.FAIL);
@@ -179,7 +182,7 @@ namespace WalkieTalkieServer
             // Adds the contact to the room
             long lastId = LastExistingId(client, "roomID", "participants");
             long insertedId = client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{contactId});");
-            if (lastId == insertedId)
+            if (lastId < insertedId)
                 outP.WriteByte((byte)ResponseType.SUCCESS);
             else
                 outP.WriteByte((byte)ResponseType.FAIL);
@@ -233,10 +236,8 @@ namespace WalkieTalkieServer
             outP.WriteShort((short)contacts.Count);
             foreach (long contactId in contacts)
                 using (Query query = client.ExecuteQuery($"SELECT username FROM users WHERE id={contactId};"))
-                {
-                    query.NextRow();
-                    outP.WriteString(query.Get<string>("username"));
-                }
+                    if(query.NextRow())
+                        outP.WriteString(query.Get<string>("username"));
             s.Send(outP);
         }
 
@@ -249,8 +250,8 @@ namespace WalkieTalkieServer
             foreach(long roomId in rooms)
                 using (Query query = client.ExecuteQuery($"SELECT roomname FROM rooms WHERE id={roomId};"))
                 {
-                    query.NextRow();
-                    outP.WriteString(query.Get<string>("roomname"));
+                    if (query.NextRow())
+                        outP.WriteString(query.Get<string>("roomname"));
                 }
             s.Send(outP);
         }
@@ -294,10 +295,9 @@ namespace WalkieTalkieServer
         private static long LastExistingId(Client client, string id_column, string table)
         {
             using (Query query = client.ExecuteQuery($"SELECT {id_column} FROM {table} ORDER BY LIMIT 1;"))
-            {
-                query.NextRow();
-                return query.Get<long>(id_column);
-            }
+                if (query.NextRow())
+                    return query.Get<long>(id_column);
+            return Definitions.NoNextRow;
         }
 
         #endregion
