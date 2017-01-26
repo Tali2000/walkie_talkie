@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 public class ContactsActivity extends Activity implements OnClickListener {
 
-    Button addContactButton;
     ListView contactList;
 
     @Override
@@ -22,6 +21,10 @@ public class ContactsActivity extends Activity implements OnClickListener {
 
         addContactButton = (Button) findViewById(R.id.addContact);
         addContactButton.setOnClickListener(this);
+
+        generalButton = (Button) findViewById(R.id.generalButton);
+        generalButton.setOnClickListener(this);
+
 
         contactList = (ListView) findViewById(R.id.contactList);
         final Activity activity = this;

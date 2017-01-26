@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".ContactsActivity" />
         <activity android:name=".AddContactActivity" />
-        <activity android:name=".RoomsActivity"></activity>
+        <activity android:name=".RoomsActivity" />
+        <activity android:name=".CreateRoomActivity"></activity>
     </application>
 
 </manifest>

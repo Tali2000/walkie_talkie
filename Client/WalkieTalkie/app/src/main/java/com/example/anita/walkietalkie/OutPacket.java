@@ -37,6 +37,10 @@ public class OutPacket implements Closeable { //so pretty i cant even
         }
     }
 
+    public void writeBool(Boolean value) {
+        writeByte((byte)(value ? 1 : 0));
+    }
+
     public void writeLong(long value) {
         for (int i = 0; i < 8; i++) {
             writeByte((byte) (value & 0xFF));

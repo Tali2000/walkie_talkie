@@ -89,33 +89,66 @@ public enum ServerOperation {
     ADDCONTACT (2){
         @Override
         public void handle(InPacket packet, final Activity activity, Handler handler) throws Exception {
-        final byte result = packet.readByte();
-        //do it every time
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                TextView messageView = (TextView) activity.findViewById(R.id.contactMessageView);
-                switch (result) {
-                    case 0: //success
-                        messageView.setText
-                                ("Successful added!");
-                        break;
-                    case 1: //user doesn't exist
-                        messageView.setText
-                                ("User doesn't exist");
-                        break;
-                    case 8: //user is already in your contacts
-                        messageView.setText
-                                ("User is already in your contacts");
-                        break;
-                    case 7: //other
-                        messageView.setText
-                                ("something went wrong");
-                        break;
+            final byte result = packet.readByte();
+            //do it every time
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView messageView = (TextView) activity.findViewById(R.id.contactMessageView);
+                    switch (result) {
+                        case 0: //success
+                            messageView.setText
+                                    ("Successful added!");
+                            break;
+                        case 1: //user doesn't exist
+                            messageView.setText
+                                    ("User doesn't exist");
+                            break;
+                        case 8: //user is already in your contacts
+                            messageView.setText
+                                    ("User is already in your contacts");
+                            break;
+                        case 7: //other
+                            messageView.setText
+                                    ("something went wrong");
+                            break;
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
+    },
+    CREATEROOM (3){
+        @Override
+        public void handle(InPacket packet, final Activity activity, Handler handler) throws Exception {
+            final byte result = packet.readByte();
+            //do it every time
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView messageView = (TextView) activity.findViewById(R.id.createRoomTextView);
+                    switch (result) {
+                        case 0: //success
+                            messageView.setText
+                                    ("Successful created!");
+                            break;
+                        case 4: //invalid roomname
+                            messageView.setText("Invalid roomname");
+                            break;
+                        case 5: //room already exists
+                            messageView.setText("room already exists");
+                            break;
+                        case 7: //other
+                            messageView.setText
+                                    ("something went wrong");
+                            break;
+                        case 14: //invalid max record time
+                            messageView.setText
+                                    ("Invalid max record time");
+                            break;
+                    }
+                }
+            });
+        }
     },
     GETCONTACTS(7) {
         @Override

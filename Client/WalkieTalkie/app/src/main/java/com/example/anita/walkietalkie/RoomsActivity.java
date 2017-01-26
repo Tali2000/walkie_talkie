@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class RoomsActivity extends Activity implements View.OnClickListener {
-    Button createRoomButton;
+    Button createRoomButton, generalButton, contactsButton;
     ListView contactList;
 
     @Override
@@ -21,6 +21,12 @@ public class RoomsActivity extends Activity implements View.OnClickListener {
 
         createRoomButton = (Button) findViewById(R.id.createRoomButton);
         createRoomButton.setOnClickListener(this);
+
+        generalButton = (Button) findViewById(R.id.generalButton);
+        generalButton.setOnClickListener(this);
+
+        contactsButton = (Button) findViewById(R.id.contactsButton);
+        contactsButton.setOnClickListener(this);
 
         contactList = (ListView) findViewById(R.id.contactList);
         final Activity activity = this;
@@ -41,15 +47,13 @@ public class RoomsActivity extends Activity implements View.OnClickListener {
         try {
             switch (v.getId()) {
                 case R.id.createRoomButton:
-                    //TODO - CreateRoomActivity
-                    //startActivity(new Intent(this, CreateRoomActivity.class));
+                    startActivity(new Intent(this, CreateRoomActivity.class));
                     break;
                 case R.id.generalButton:
                     //TODO - generalActivity
-
                     break;
-                case R.id.roomsButton:
-                    startActivity(new Intent(this, RoomsActivity.class));
+                case R.id.contactsButton:
+                    startActivity(new Intent(this, ContactsActivity.class));
                     break;
             }
         } catch (Exception e) {

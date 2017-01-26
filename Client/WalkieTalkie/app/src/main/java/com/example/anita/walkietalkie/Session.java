@@ -100,4 +100,13 @@ public class Session {
             Send(packet);
         }
     }
+
+    public void CreateRoom(String roomname, Short maxTime, Boolean anonymousMode) throws IOException {
+        try(OutPacket packet = new OutPacket(ClientOperation.CREATEROOM)){
+            packet.writeString(roomname);
+            packet.writeShort(maxTime);
+            packet.writeBool(anonymousMode);
+            Send(packet);
+        }
+    }
 }
