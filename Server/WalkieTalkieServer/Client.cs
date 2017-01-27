@@ -31,10 +31,5 @@ namespace WalkieTalkieServer
                 m_schema = Database.Instance.Connect("walkietalkie");
             return m_schema.ExecuteNonQuery(cmd);
         }
-
-        public long GetLastInsertedId()
-        {
-            return m_schema.GetLastInsertedId();
-        }
     }
 }

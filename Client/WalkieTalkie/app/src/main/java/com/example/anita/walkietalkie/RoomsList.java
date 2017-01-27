@@ -1,16 +1,18 @@
 package com.example.anita.walkietalkie;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class RoomsList {
+    public final static String ROOMNAME = "com.example.anita.walkietalkie";
     private ListView roomList;
     private ArrayAdapter<String> adapter;
 
-    public RoomsList(Activity activity, String[] values) {
+    public RoomsList(final Activity activity, String[] values) {
         roomList = (ListView) activity.findViewById(R.id.roomList);;
 
         // Define a new Adapter
@@ -32,12 +34,11 @@ public class RoomsList {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-
-                // ListView Clicked item index
-                int itemPosition = position;
-
                 // ListView Clicked item value
                 String itemValue = (String) roomList.getItemAtPosition(position);
+                Intent intent = new Intent(activity, RoomChatActivity.class);
+                intent.putExtra(ROOMNAME, itemValue);
+                activity.startActivity(intent);
             }
 
         });

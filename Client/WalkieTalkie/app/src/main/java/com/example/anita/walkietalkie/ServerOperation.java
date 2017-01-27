@@ -61,9 +61,7 @@ public enum ServerOperation {
                     switch (result) {
                         case 0: //success
                             messageView.setText
-                                    ("Successful connected!");
-                            Intent intent = new Intent(activity, ContactsActivity.class);
-                            activity.startActivity(intent);
+                                    ("Successfully registered!");
                             break;
                         case 4: //Invalid username
                             messageView.setText
@@ -119,7 +117,7 @@ public enum ServerOperation {
     },
     CREATEROOM (3){
         @Override
-        public void handle(InPacket packet, final Activity activity, Handler handler) throws Exception {
+        public void handle(InPacket packet, final Activity activity, final Handler handler) throws Exception {
             final byte result = packet.readByte();
             //do it every time
             handler.post(new Runnable() {

@@ -32,11 +32,5 @@ namespace Data
             cmd.CommandText = query;
             return new Query(cmd.ExecuteReader());
         }
-
-        public long GetLastInsertedId()
-        {
-            MySqlCommand cmd = m_connection.CreateCommand();
-            return cmd.LastInsertedId;
-        }
     }
 }

@@ -58,9 +58,9 @@ namespace WalkieTalkieServer
             if (Validator.IsValidUsername(username))
                 if (Validator.IsValidPassword(password))
                 {
-                    long lastId = LastExistingId(client, "id", "users");
-                    long insertedId = client.ExecuteNonQuery($"INSERT INTO users(username,pass) values('{username}','{password}');");
-                    if (lastId < insertedId)
+                    client.ExecuteNonQuery($"INSERT INTO users(username,pass) values('{username}','{password}');");
+                    List<string> inserted = InsertedValues<string>(client, new string[] { "username", "pass" }, "users", "id");
+                    if (IsActuallyInserted<string>(new string[] { username, password }, inserted))
                         outP.WriteByte((byte)ResponseType.SUCCESS);
                     else
                         outP.WriteByte((byte)ResponseType.FAIL);
@@ -98,9 +98,9 @@ namespace WalkieTalkieServer
                 outP.WriteByte((byte)ResponseType.ALREADY_IN_CONTACTS);
             else
             {
-                long lastId = LastExistingId(client, "userID", "contacts");
-                long insertedId = client.ExecuteNonQuery($"INSERT INTO contacts(userID,contactID) values({client.Id},{contactId});");
-                if (lastId < insertedId)
+                client.ExecuteNonQuery($"INSERT INTO contacts(userID,contactID) values({client.Id},{contactId});");
+                List<long> inserted = InsertedValues<long>(client, new string[] { "userID", "contactID" }, "contacts", "userID");
+                if (IsActuallyInserted<long>(new long[] { client.Id, contactId }, inserted))
                     outP.WriteByte((byte)ResponseType.SUCCESS);
                 else
                     outP.WriteByte((byte)ResponseType.FAIL);
@@ -111,6 +111,8 @@ namespace WalkieTalkieServer
         public static void CreateRoom(Session s, InPacket p)
         {
             string roomname = p.ReadString();
+            short maxRecordTime = p.ReadShort();
+            bool isAnonymous = p.ReadBool();                                            //TODO: use it
             Client client = Program.Server.GetClient(s.Id);
             OutPacket outP = new OutPacket(ServerOperation.CREATE_ROOM);
             // Checks whether such room already exists
@@ -121,19 +123,28 @@ namespace WalkieTalkieServer
                     s.Send(outP);
                     return;
                 }
+            // Checks whether the max record time is valid
+            if(!Validator.IsValidRecordTime(maxRecordTime))
+            {
+                outP.WriteByte((byte)ResponseType.INVALID_TIME);
+                s.Send(outP);
+                return;
+            }
             // Checks whether room's name is valid
             if (Validator.IsValidRoomname(roomname))
             {
-                long lastId = LastExistingId(client, "id", "rooms");
-                long insertedId = client.ExecuteNonQuery($"INSERT INTO rooms(roomname,adminID) values('{roomname}',{client.Id});");
-                if (lastId < insertedId)
+                client.ExecuteNonQuery($"INSERT INTO rooms(roomname,adminID) values('{roomname}',{client.Id});");
+                List<string> inserted1 = InsertedValues<string>(client, new string[] { "roomname", "adminID" }, "rooms", "id");
+                if (IsActuallyInserted<string>(new string[] { roomname, client.Id.ToString() }, inserted1))
                 {
-                    client.CurrRoomId = client.GetLastInsertedId();
+                    using (Query query = client.ExecuteQuery($"SELECT id FROM rooms ORDER BY id DESC LIMIT 1;"))
+                        if (query.NextRow())
+                            client.CurrRoomId = query.Get<long>("id");
                     client.IsAdmin = true;
 
-                    lastId = LastExistingId(client, "roomID", "participants");
-                    insertedId = client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{client.Id});");
-                    if (lastId < insertedId)
+                    client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{client.Id});");
+                    List<long> inserted2 = InsertedValues<long>(client, new string[] { "roomID", "participantID" }, "participants", "roomID");
+                    if (IsActuallyInserted<long>(new long[] { client.CurrRoomId, client.Id }, inserted2))
                         outP.WriteByte((byte)ResponseType.SUCCESS);
                     else
                         outP.WriteByte((byte)ResponseType.FAIL);
@@ -180,9 +191,9 @@ namespace WalkieTalkieServer
                 return;
             }
             // Adds the contact to the room
-            long lastId = LastExistingId(client, "roomID", "participants");
-            long insertedId = client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{contactId});");
-            if (lastId < insertedId)
+            client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{contactId});");
+            List<long> inserted = InsertedValues<long>(client, new string[] { "roomID", "participantID" }, "participants", "roomID");
+            if (IsActuallyInserted<long>(new long[] { client.CurrRoomId, contactId }, inserted))
                 outP.WriteByte((byte)ResponseType.SUCCESS);
             else
                 outP.WriteByte((byte)ResponseType.FAIL);
@@ -249,10 +260,8 @@ namespace WalkieTalkieServer
             outP.WriteShort((short)rooms.Count);
             foreach(long roomId in rooms)
                 using (Query query = client.ExecuteQuery($"SELECT roomname FROM rooms WHERE id={roomId};"))
-                {
                     if (query.NextRow())
                         outP.WriteString(query.Get<string>("roomname"));
-                }
             s.Send(outP);
         }
 
@@ -292,12 +301,33 @@ namespace WalkieTalkieServer
             return participants;
         }
 
-        private static long LastExistingId(Client client, string id_column, string table)
+        private static List<T> InsertedValues<T>(Client client, string[] columns, string table, string idColumn)
         {
-            using (Query query = client.ExecuteQuery($"SELECT {id_column} FROM {table} ORDER BY LIMIT 1;"))
+            List<T> values = new List<T>();
+            string cmd = "SELECT ";
+            for (int i = 0; i < columns.Length; i++)
+            {
+                cmd += columns[i];
+                if (i != columns.Length - 1)
+                    cmd += ",";
+            }
+            cmd += $" FROM {table} ORDER BY {idColumn} DESC LIMIT 1;";
+
+            using (Query query = client.ExecuteQuery(cmd))
                 if (query.NextRow())
-                    return query.Get<long>(id_column);
-            return Definitions.NoNextRow;
+                    foreach (string column in columns)
+                        values.Add(query.Get<T>(column));
+            return values;
+        }
+
+        private static bool IsActuallyInserted<T>(T[] expected, List<T> inserted)
+        {
+            if (expected.Length != inserted.Count)
+                return false;
+            for (int i = 0; i < expected.Length; i++)
+                if (!expected[i].Equals(inserted[i]))
+                    return false;
+            return true;
         }
 
         #endregion

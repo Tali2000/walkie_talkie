@@ -109,4 +109,18 @@ public class Session {
             Send(packet);
         }
     }
+
+    public void AddContactToRoom(String username) throws IOException {
+        try(OutPacket packet = new OutPacket(ClientOperation.ADDCONTACTTOROOM)){
+            packet.writeString(username);
+            Send(packet);
+        }
+    }
+
+    public void SendCurrentRoom(String roomname) throws IOException {
+        try(OutPacket packet = new OutPacket(ClientOperation.SENDCURRROOM)){
+            packet.writeString(roomname);
+            Send(packet);
+        }
+    }
 }
