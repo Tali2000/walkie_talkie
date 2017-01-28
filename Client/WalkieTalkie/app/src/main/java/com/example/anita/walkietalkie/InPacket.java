@@ -37,4 +37,8 @@ public class InPacket {
         buffer.get(str);
         return new String(str);
     }
+
+    public Boolean readBool() throws Exception {
+        return readByte() == 1;
+    }
 }

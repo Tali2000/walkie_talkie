@@ -110,8 +110,8 @@ public class Session {
         }
     }
 
-    public void AddContactToRoom(String username) throws IOException {
-        try(OutPacket packet = new OutPacket(ClientOperation.ADDCONTACTTOROOM)){
+    public void AddParticipant(String username) throws IOException {
+        try(OutPacket packet = new OutPacket(ClientOperation.ADDPARTICIPANT)){
             packet.writeString(username);
             Send(packet);
         }
@@ -120,6 +120,12 @@ public class Session {
     public void SendCurrentRoom(String roomname) throws IOException {
         try(OutPacket packet = new OutPacket(ClientOperation.SENDCURRROOM)){
             packet.writeString(roomname);
+            Send(packet);
+        }
+    }
+
+    public void GetParticipants() throws IOException{
+        try(OutPacket packet = new OutPacket(ClientOperation.GETPARTICIPANTS)){
             Send(packet);
         }
     }

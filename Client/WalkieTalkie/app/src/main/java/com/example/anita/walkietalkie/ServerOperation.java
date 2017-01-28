@@ -14,7 +14,6 @@ import java.io.IOException;
 
 
 public enum ServerOperation {
-
     SIGNIN(0) {
         @Override
         public void handle(InPacket packet, final Activity activity, final Handler handler) throws Exception {
@@ -148,6 +147,65 @@ public enum ServerOperation {
             });
         }
     },
+    ADDPARTICIPANT (4){
+        @Override
+        public void handle(InPacket packet, final Activity activity, final Handler handler) throws Exception {
+            final byte result = packet.readByte();
+            //do it every time
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView messageView = (TextView) activity.findViewById(R.id.textViewAddParticipantMessage);
+                    switch (result) {
+                        case 0: //success
+                            messageView.setText
+                                    ("Successful added!");
+                            break;
+                        case 1: //participant doesn’t exist
+                            messageView.setText("participant doesn’t exist");
+                            break;
+                        case 10: //contact is already in the room
+                            messageView.setText("contact is already in the room");
+                            break;
+                        case 7: //other
+                            messageView.setText
+                                    ("something went wrong");
+                            break;
+                        case 11: //user is not in your contacts
+                            messageView.setText
+                                    ("user is not in your contacts");
+                            break;
+                    }
+                }
+            });
+        }
+    },
+    SENDCURRROOM (6){
+        @Override
+        public void handle(final InPacket packet, final Activity activity, final Handler handler) throws Exception {
+            final byte isRoom = packet.readByte();
+            //do it every time
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(isRoom == 0){ //if room exists
+                        Boolean isAdmin = false;
+                        try {
+                            isAdmin = packet.readBool();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Intent intent = new Intent(activity, RoomChatActivity.class);
+                        intent.putExtra("IS_ADMIN", isAdmin ? "1":"0"); //TODO!!!!!!!!!!!!!!!!!!!!!!!
+                    }
+                    else{ //if room doesn't exists
+                        Intent intent = new Intent(activity,RoomsList.class);
+                        activity.startActivity(intent);
+                    }
+                }
+            });
+        }
+    },
     GETCONTACTS(7) {
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
@@ -196,6 +254,32 @@ public enum ServerOperation {
                 @Override
                 public void run() {
                     RoomsList roomsList = new RoomsList(activity, values);
+                }
+            });
+        }
+    },
+    GETPARTICIPANTS(9) {
+        @Override
+        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
+            final short partiNum = packet.readShort();
+            final String[] values = new String[partiNum];
+            Short partiLen = 0;
+            String partiname = "";
+            for (byte i = 0; i < partiNum; i++){
+                try {
+                    partiLen = packet.readShort();
+                    partiname = packet.readString(partiLen);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                values[i] = partiname;
+            }
+            //do it every time
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    ParticipantsList participantsList = new ParticipantsList(activity, values);
                 }
             });
         }

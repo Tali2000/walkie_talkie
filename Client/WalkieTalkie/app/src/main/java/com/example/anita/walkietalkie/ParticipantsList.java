@@ -1,19 +1,17 @@
 package com.example.anita.walkietalkie;
 
-
 import android.app.Activity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-public class ContactsList {
-    private ListView contactList;
+public class ParticipantsList {
+    private ListView participantsList;
     private ArrayAdapter<String> adapter;
 
-    public ContactsList(Activity activity, String[] values) {
-        contactList = (ListView) activity.findViewById(R.id.contactList);
+    public ParticipantsList(Activity activity, String[] values) {
+        participantsList = (ListView) activity.findViewById(R.id.ParticipantsList);
 
         // Define a new Adapter
         // First parameter - Context
@@ -25,10 +23,10 @@ public class ContactsList {
                 android.R.layout.simple_list_item_1, android.R.id.text1, values);
 
         // Assign adapter to ListView
-        contactList.setAdapter(adapter);
+        participantsList.setAdapter(adapter);
 
         // ListView Item Click Listener
-        contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        participantsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -38,7 +36,7 @@ public class ContactsList {
                 int itemPosition = position;
 
                 // ListView Clicked item value
-                String itemValue = (String) contactList.getItemAtPosition(position);
+                String itemValue = (String) participantsList.getItemAtPosition(position);
             }
 
         });
