@@ -8,8 +8,10 @@
         CREATE_ROOM,
         ADD_PARTICIPANT,
         ALLOW_ENTRANCE,
-        GET_CONTACTS = 7,
-        GET_ROOMS
+        CURRENT_ROOM,
+        GET_CONTACTS,
+        GET_ROOMS,
+        GET_PARTICIPANTS
     }
 
     public enum ResponseType : byte

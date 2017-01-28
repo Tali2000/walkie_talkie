@@ -234,9 +234,17 @@ namespace WalkieTalkieServer
         {
             string roomname = p.ReadString();
             Client client = Program.Server.GetClient(s.Id);
-            using (Query query = client.ExecuteQuery($"SELECT id FROM rooms WHERE roomname='{roomname};"))
+            OutPacket outP = new OutPacket(ServerOperation.CURRENT_ROOM);
+            using (Query query = client.ExecuteQuery($"SELECT id,adminID FROM rooms WHERE roomname='{roomname};"))
                 if (query.NextRow())
+                {
                     client.CurrRoomId = query.Get<long>("id");
+                    outP.WriteByte((byte)ResponseType.SUCCESS);
+                    outP.WriteBool(client.Id == query.Get<long>("adminID"));
+                }
+                else
+                    outP.WriteByte((byte)ResponseType.DOESNT_EXIST);
+            s.Send(outP);
         }
 
         public static void SendContacts(Session s, InPacket p)
@@ -262,6 +270,19 @@ namespace WalkieTalkieServer
                 using (Query query = client.ExecuteQuery($"SELECT roomname FROM rooms WHERE id={roomId};"))
                     if (query.NextRow())
                         outP.WriteString(query.Get<string>("roomname"));
+            s.Send(outP);
+        }
+
+        public static void SendParticipants(Session s, InPacket p)
+        {
+            Client client = Program.Server.GetClient(s.Id);
+            OutPacket outP = new OutPacket(ServerOperation.GET_PARTICIPANTS);
+            List<long> participants = GetParticipants(client);
+            outP.WriteShort((short)participants.Count);
+            foreach (long participant in participants)
+                using (Query query = client.ExecuteQuery($"SELECT username FROM users WHERE id={participant}"))
+                    if (query.NextRow())
+                        outP.WriteString(query.Get<string>("username"));
             s.Send(outP);
         }
 

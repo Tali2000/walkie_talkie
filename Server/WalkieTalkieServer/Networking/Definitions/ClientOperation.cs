@@ -10,6 +10,7 @@
         ALLOW_ENTRANCE,
         CURRENT_ROOM,
         GET_CONTACTS,
-        GET_ROOMS
+        GET_ROOMS,
+        GET_PARTICIPANTS
     }
 }

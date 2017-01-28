@@ -20,7 +20,7 @@ namespace WalkieTalkieServer
             return IsValid(Definitions.min_RoomnameLen, Definitions.max_RoomnameLen, roomname);
         }
 
-        private static bool IsValid(uint minLen, uint maxLen, string toCheck)
+        private static bool IsValid(ushort minLen, ushort maxLen, string toCheck)
         {
             Regex rgx = new Regex(Definitions.pattern);
             return (toCheck.Length >= minLen && toCheck.Length <= maxLen &&
