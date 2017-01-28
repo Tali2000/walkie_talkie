@@ -1,6 +1,7 @@
 ﻿using Common.Networking;
 using Common.Networking.Definitions;
 using Data;
+using System;
 using System.Collections.Generic;
 using WalkieTalkieServer.Networking.Definitions;
 
@@ -112,7 +113,7 @@ namespace WalkieTalkieServer
         {
             string roomname = p.ReadString();
             short maxRecordTime = p.ReadShort();
-            bool isAnonymous = p.ReadBool();                                            //TODO: use it
+            bool isAnonymous = p.ReadBool();
             Client client = Program.Server.GetClient(s.Id);
             OutPacket outP = new OutPacket(ServerOperation.CREATE_ROOM);
             // Checks whether such room already exists
@@ -133,18 +134,18 @@ namespace WalkieTalkieServer
             // Checks whether room's name is valid
             if (Validator.IsValidRoomname(roomname))
             {
-                client.ExecuteNonQuery($"INSERT INTO rooms(roomname,adminID) values('{roomname}',{client.Id});");
-                List<string> inserted1 = InsertedValues<string>(client, new string[] { "roomname", "adminID" }, "rooms", "id");
-                if (IsActuallyInserted<string>(new string[] { roomname, client.Id.ToString() }, inserted1))
+                client.ExecuteNonQuery($"INSERT INTO rooms(roomname,adminID,isAnonymous) values('{roomname}',{client.Id},{isAnonymous});");
+                List<string> inserted1 = InsertedValues<string>(client, new string[] { "roomname", "adminID", "isAnonymous" }, "rooms", "id");
+                if (IsActuallyInserted<string>(new string[] { roomname, client.Id.ToString(), isAnonymous.ToString() }, inserted1))
                 {
                     using (Query query = client.ExecuteQuery($"SELECT id FROM rooms ORDER BY id DESC LIMIT 1;"))
                         if (query.NextRow())
                             client.CurrRoomId = query.Get<long>("id");
                     client.IsAdmin = true;
 
-                    client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{client.Id});");
-                    List<long> inserted2 = InsertedValues<long>(client, new string[] { "roomID", "participantID" }, "participants", "roomID");
-                    if (IsActuallyInserted<long>(new long[] { client.CurrRoomId, client.Id }, inserted2))
+                    client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID,isEntered) values({client.CurrRoomId},{client.Id},{true});");
+                    List<long> inserted2 = InsertedValues<long>(client, new string[] { "roomID", "participantID", "isEntered" }, "participants", "roomID");
+                    if (IsActuallyInserted<long>(new long[] { client.CurrRoomId, client.Id, Convert.ToInt64(true) }, inserted2))
                         outP.WriteByte((byte)ResponseType.SUCCESS);
                     else
                         outP.WriteByte((byte)ResponseType.FAIL);
@@ -187,6 +188,14 @@ namespace WalkieTalkieServer
             if (rooms.Contains(client.CurrRoomId))
             {
                 outP.WriteByte((byte)ResponseType.ALREADY_IN_ROOM);
+                s.Send(outP);
+                return;
+            }
+            // Checks whether the room is full
+            List<long> participants = GetParticipants(client);
+            if(participants.Count==Definitions.max_NumParticipants)
+            {
+                outP.WriteByte((byte)ResponseType.FULL_ROOM);
                 s.Send(outP);
                 return;
             }
@@ -235,7 +244,7 @@ namespace WalkieTalkieServer
             string roomname = p.ReadString();
             Client client = Program.Server.GetClient(s.Id);
             OutPacket outP = new OutPacket(ServerOperation.CURRENT_ROOM);
-            using (Query query = client.ExecuteQuery($"SELECT id,adminID FROM rooms WHERE roomname='{roomname};"))
+            using (Query query = client.ExecuteQuery($"SELECT id,adminID FROM rooms WHERE roomname='{roomname}';"))
                 if (query.NextRow())
                 {
                     client.CurrRoomId = query.Get<long>("id");

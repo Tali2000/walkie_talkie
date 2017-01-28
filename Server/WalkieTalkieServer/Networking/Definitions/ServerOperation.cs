@@ -30,6 +30,7 @@
         NOT_IN_CONTACTS,
         ALREADY_ENTERED,
         NOT_PARTICIPANT_OF_ROOM,
-        INVALID_TIME
+        INVALID_TIME,
+        FULL_ROOM
     }
 }

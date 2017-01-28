@@ -11,6 +11,6 @@
         public const ushort max_RoomnameLen = 20;
         public const ushort min_RecordTime = 10;
         public const ushort max_RecordTime = 60;
-        public const uint max_NumParticipants = 10;     //in each room              //TODO: use it
+        public const uint max_NumParticipants = 10;     //in each room
     }
 }
