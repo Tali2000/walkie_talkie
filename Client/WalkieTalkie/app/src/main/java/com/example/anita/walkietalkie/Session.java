@@ -11,7 +11,7 @@ import java.net.Socket;
 
 public class Session {
     private static Session instance;
-    private static final String address = "192.168.1.27";
+    private static final String address = "192.168.1.24";
     private static final int port = 4242;
     private Socket socket;
     private Activity currentActivity;
@@ -126,6 +126,15 @@ public class Session {
 
     public void GetParticipants() throws IOException{
         try(OutPacket packet = new OutPacket(ClientOperation.GETPARTICIPANTS)){
+            Send(packet);
+        }
+    }
+
+    public void SendRecord(String filePath) throws IOException{
+        try(OutPacket packet = new OutPacket(ClientOperation.SENDRECORD)){/*
+
+            packet.writeInt(record.length);
+            packet.writeBuffer(record);*/
             Send(packet);
         }
     }

@@ -109,6 +109,10 @@ public enum ServerOperation {
                             messageView.setText
                                     ("something went wrong");
                             break;
+                        case 9: //trying to add yourself
+                            messageView.setText
+                                    ("Are you kidding? You can't add yourself");
+                            break;
                     }
                 }
             });

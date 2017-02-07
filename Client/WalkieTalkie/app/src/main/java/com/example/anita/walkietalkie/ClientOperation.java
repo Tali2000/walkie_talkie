@@ -10,7 +10,8 @@ public enum ClientOperation {
     SENDCURRROOM((byte)6),
     GETCONTACTS((byte)7),
     GETROOMS((byte)8),
-    GETPARTICIPANTS((byte)9);
+    GETPARTICIPANTS((byte)9),
+    SENDRECORD((byte)11);
 
     private byte value;
 

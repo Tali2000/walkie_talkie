@@ -5,7 +5,7 @@ import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class OutPacket implements Closeable { //so pretty i cant even
+public class OutPacket implements Closeable {
     private ByteArrayOutputStream m_arrayOut;
     private DataOutputStream m_dataOut;
 
