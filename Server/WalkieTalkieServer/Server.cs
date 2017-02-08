@@ -71,6 +71,8 @@ namespace WalkieTalkieServer
             handlers.Add(ClientOperation.GET_CONTACTS, OperationHandlers.SendContacts);
             handlers.Add(ClientOperation.GET_ROOMS, OperationHandlers.SendRooms);
             handlers.Add(ClientOperation.GET_PARTICIPANTS, OperationHandlers.SendParticipants);
+            handlers.Add(ClientOperation.SET_DISTORTION, OperationHandlers.SetDistortionType);
+            handlers.Add(ClientOperation.SEND_VOICE_MESSAGE, OperationHandlers.VoiceMessage);
         }
     }
 }

@@ -11,7 +11,10 @@
         CURRENT_ROOM,
         GET_CONTACTS,
         GET_ROOMS,
-        GET_PARTICIPANTS
+        GET_PARTICIPANTS,
+        SET_DISTORTION,
+        VOICE_MESSAGE,
+        SEND_VOICE_MESSAGE  //sends to the participants of the room
     }
 
     public enum ResponseType : byte

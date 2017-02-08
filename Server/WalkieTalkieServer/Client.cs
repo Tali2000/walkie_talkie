@@ -18,6 +18,11 @@ namespace WalkieTalkieServer
             IsConnected = false;
         }
 
+        public Session GetSession()
+        {
+            return m_session;
+        }
+
         public Query ExecuteQuery(string cmd)
         {
             if (m_schema == null)

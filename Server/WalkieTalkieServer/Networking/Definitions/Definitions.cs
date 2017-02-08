@@ -13,4 +13,10 @@
         public const ushort max_RecordTime = 60;
         public const uint max_NumParticipants = 10;     //in each room
     }
+
+    public enum DistortionType : byte
+    {
+        NONE
+
+    }
 }
