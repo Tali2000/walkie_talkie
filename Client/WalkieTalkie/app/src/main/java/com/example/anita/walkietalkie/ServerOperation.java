@@ -4,13 +4,8 @@ package com.example.anita.walkietalkie;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
-
-import java.io.DataInputStream;
 import java.io.IOException;
-
 
 
 public enum ServerOperation {
@@ -284,6 +279,26 @@ public enum ServerOperation {
                 @Override
                 public void run() {
                     ParticipantsList participantsList = new ParticipantsList(activity, values);
+                }
+            });
+        }
+    },
+    SENDRECOED(11) {
+        @Override
+        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
+            final byte result = packet.readByte();
+            //do it every time
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    switch (result) {
+                        case 0: //success
+                            break;
+                        case 2: //wrong details
+                            break;
+                        case 7: //fail
+                            break;
+                    }
                 }
             });
         }

@@ -4,9 +4,8 @@ package com.example.anita.walkietalkie;
 
 import android.app.Activity;
 import android.os.Handler;
-import java.io.DataInputStream;
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.Socket;
 
 public class Session {
@@ -131,10 +130,8 @@ public class Session {
     }
 
     public void SendRecord(String filePath) throws IOException{
-        try(OutPacket packet = new OutPacket(ClientOperation.SENDRECORD)){/*
-
-            packet.writeInt(record.length);
-            packet.writeBuffer(record);*/
+        try(OutPacket packet = new OutPacket(ClientOperation.SENDRECORD)){
+            packet.writeFile(filePath);
             Send(packet);
         }
     }

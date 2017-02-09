@@ -1,8 +1,12 @@
 package com.example.anita.walkietalkie;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class OutPacket implements Closeable {
@@ -36,10 +40,10 @@ public class OutPacket implements Closeable {
             value >>= 8;
         }
     }
+
     public void writeBool(Boolean value) {
         writeByte((byte)(value ? 1 : 0));
     }
-
 
     public void writeLong(long value) {
         for (int i = 0; i < 8; i++) {
@@ -56,6 +60,20 @@ public class OutPacket implements Closeable {
     public void writeString(String value) {
         writeShort((short)value.length());
         writeBuffer(value.getBytes());
+    }
+
+    public void writeFile(String filePath){
+        byte[] buffer = new byte[1024];
+        try{
+            BufferedInputStream in = new BufferedInputStream
+                    (new FileInputStream(new File(filePath)));
+            writeInt(in.available());
+            while(in.read(buffer) >= 0)
+                writeBuffer(buffer);
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+
     }
 
     public byte[] toByteArray() {

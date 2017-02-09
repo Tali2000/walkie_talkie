@@ -82,8 +82,14 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN)
                     startRecording();
-                else if(event.getAction() == MotionEvent.ACTION_UP)
+                else if(event.getAction() == MotionEvent.ACTION_UP){
                     stopRecording();
+                    try{
+                        Session.getInstance(activity, handler).SendRecord(mFileName);
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
                 return false;
             }
         });
