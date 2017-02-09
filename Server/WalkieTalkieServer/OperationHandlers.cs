@@ -16,18 +16,18 @@ namespace WalkieTalkieServer
             string password = p.ReadString();
             Client client = Program.Server.GetClient(s.Id);
             OutPacket outP = new OutPacket(ServerOperation.SIGN_IN);
-            if (client.IsConnected)
-            {
-                outP.WriteByte((byte)ResponseType.ALREADY_CONNETED);
-                s.Send(outP);
-                return;
-            }
             string realPassword = null;
-            using (Query query = client.ExecuteQuery($"SELECT pass FROM users WHERE username='{username}';"))
+            using (Query query = client.ExecuteQuery($"SELECT id,pass FROM users WHERE username='{username}';"))
             {
                 if (!query.NextRow())
                 {
                     outP.WriteByte((byte)ResponseType.DOESNT_EXIST);
+                    s.Send(outP);
+                    return;
+                }
+                else if(Program.Server.IsConnected(query.Get<long>("id")))
+                {
+                    outP.WriteByte((byte)ResponseType.ALREADY_CONNETED);
                     s.Send(outP);
                     return;
                 }
@@ -36,7 +36,6 @@ namespace WalkieTalkieServer
             if (password == realPassword)
             {
                 outP.WriteByte((byte)ResponseType.SUCCESS);
-                client.IsConnected = true;
                 SetClientId(client, username);
             }
             else

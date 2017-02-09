@@ -32,6 +32,11 @@ namespace WalkieTalkieServer
             return clients[id];
         }
 
+        public bool IsConnected(long id)
+        {
+            return clients.ContainsKey(id);
+        }
+
         #region Events
 
         private void OnClientConnected(object sender, SessionEventArgs e)
