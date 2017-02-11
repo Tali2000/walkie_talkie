@@ -34,7 +34,10 @@ namespace WalkieTalkieServer
 
         public bool IsConnected(long id)
         {
-            return clients.ContainsKey(id);
+            foreach (Client client in clients.Values)
+                if (client.Id == id)
+                    return client.IsConnected;
+            return false;
         }
 
         #region Events

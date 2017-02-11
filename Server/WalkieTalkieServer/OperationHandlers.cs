@@ -37,6 +37,7 @@ namespace WalkieTalkieServer
             {
                 outP.WriteByte((byte)ResponseType.SUCCESS);
                 SetClientId(client, username);
+                client.IsConnected = true;
             }
             else
                 outP.WriteByte((byte)ResponseType.WRONG_DETAILS);

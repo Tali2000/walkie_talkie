@@ -7,6 +7,7 @@ namespace WalkieTalkieServer
     {
         private Session m_session;
         private Schema m_schema;
+        public bool IsConnected;
         public long Id;
         public long CurrRoomId;
         public bool IsAdmin;    //in current room
@@ -14,6 +15,7 @@ namespace WalkieTalkieServer
         public Client(Session session)
         {
             m_session = session;
+            IsConnected = false;
         }
 
         public Session GetSession()
