@@ -335,7 +335,7 @@ namespace WalkieTalkieServer
                 query1.NextRow();
                 if (!query1.Get<bool>("isAnonymous"))
                     using (Query query2 = client.ExecuteQuery($"SELECT username FROM users WHERE id={client.Id};"))
-                        if(query1.NextRow())
+                        if(query2.NextRow())
                             senderUsername = query2.Get<string>("username");
             }
             if (SendVoiceMessage(participants, filePath, senderUsername, client.Id))
