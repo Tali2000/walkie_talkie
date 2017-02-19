@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Media;
 using System.Speech.Synthesis;
+using WalkieTalkieServer.Networking.Definitions;
 
 namespace WalkieTalkieServer
 {
@@ -42,6 +43,19 @@ namespace WalkieTalkieServer
             catch
             {
                 return false;
+            }
+        }
+
+        public static void Distort(string path, DistortionType distortion)
+        {
+            byte[] message = File.ReadAllBytes(path);
+            switch(distortion)
+            {
+                case DistortionType.NONE:
+                    break;
+
+                default:
+                    break;
             }
         }
     }

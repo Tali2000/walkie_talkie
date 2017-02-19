@@ -338,7 +338,7 @@ namespace WalkieTalkieServer
                         if(query2.NextRow())
                             senderUsername = query2.Get<string>("username");
             }
-            if (SendVoiceMessage(participants, filePath, senderUsername, client.Id))
+            if (SendVoiceMessage(participants, filePath, senderUsername, client))
                 outP.WriteByte((byte)ResponseType.SUCCESS);
             else
                 outP.WriteByte((byte)ResponseType.FAIL);
@@ -346,7 +346,7 @@ namespace WalkieTalkieServer
         }
 
         // Sends the voice message to all room's participants
-        private static bool SendVoiceMessage(List<long> participants, string path, string senderUsername, long senderId)
+        private static bool SendVoiceMessage(List<long> participants, string path, string senderUsername, Client client)
         {
             OutPacket outP = new OutPacket(ServerOperation.SEND_VOICE_MESSAGE);
             if (senderUsername.Length != 0)
@@ -354,11 +354,17 @@ namespace WalkieTalkieServer
                 outP.WriteShort((short)senderUsername.Length);
                 outP.WriteString(senderUsername);
             }
-            /////////////////////////////////////////////// TODO: DISTORTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            using (Query query = client.ExecuteQuery($"SELECT distortion FROM participants WHERE participantID={client.Id};"))
+            {
+                query.NextRow();
+                VoiceHandling.Distort(path, (DistortionType)query.Get<int>("distortion"));
+            }
+
             outP.WriteInt(path.Length);
             outP.WriteBuffer(File.ReadAllBytes(path));
             foreach (long id in participants)
-                if (id != senderId)
+                if (id != client.Id)
                     if (!Program.Server.GetClient(id).GetSession().Send(outP))
                         return false;
             return true;
