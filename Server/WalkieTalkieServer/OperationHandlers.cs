@@ -349,6 +349,12 @@ namespace WalkieTalkieServer
         private static bool SendVoiceMessage(List<long> participants, string path, string senderUsername, Client client)
         {
             OutPacket outP = new OutPacket(ServerOperation.SEND_VOICE_MESSAGE);
+            using (Query query = client.ExecuteQuery($"SELECT roomname FROM rooms WHERE id={client.CurrRoomId};"))
+            {
+                query.NextRow();
+                outP.WriteShort((short)query.Get<string>("roomname").Length);
+                outP.WriteString(query.Get<string>("roomname"));
+            }
             if (senderUsername.Length != 0)
             {
                 outP.WriteShort((short)senderUsername.Length);
