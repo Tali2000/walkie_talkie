@@ -343,6 +343,7 @@ namespace WalkieTalkieServer
             else
                 outP.WriteByte((byte)ResponseType.FAIL);
             s.Send(outP);
+            File.Delete(filePath);
         }
 
         // Sends the voice message to all room's participants
