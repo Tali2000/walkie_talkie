@@ -16,11 +16,11 @@
 
     public enum DistortionType : byte
     {
+        NONE,
         ECHO,
         HELIUM_BALL,
         LOW_VOICE,
         METALIC,
-        CRAZY_BABY,
-        NONE
+        CRAZY_BABY
     }
 }

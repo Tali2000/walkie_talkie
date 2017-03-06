@@ -3,6 +3,8 @@ package com.example.anita.walkietalkie;
 /*Connection to server class*/
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.Handler;
 
 import java.io.IOException;
@@ -14,6 +16,7 @@ public class Session {
     private static final int port = 4242;
     private Socket socket;
     private Activity currentActivity;
+    private static String appName;
 
     public static Session getInstance(final Activity activity, final Handler handler) {
         if (instance == null)
@@ -32,6 +35,7 @@ public class Session {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        appName = getApplicationName(activity);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -59,6 +63,16 @@ public class Session {
             }
             }
         }).start();
+    }
+
+    public static String getApplicationName(Context context) {
+        ApplicationInfo applicationInfo = context.getApplicationInfo();
+        int stringId = applicationInfo.labelRes;
+        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
+    }
+
+    public static String getApplicationName(){
+        return appName;
     }
 
     public void Send(OutPacket packet) throws IOException {

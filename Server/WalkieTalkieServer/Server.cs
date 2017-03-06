@@ -32,6 +32,15 @@ namespace WalkieTalkieServer
             return clients[id];
         }
 
+        // Gets the client by the id of it's username in the DB (but not the session)
+        public Client GetClientByDBid(long id)
+        {
+            foreach (Client client in clients.Values)
+                if (client.Id == id)
+                    return client;
+            return null;
+        }
+
         public bool IsConnected(long id)
         {
             foreach (Client client in clients.Values)

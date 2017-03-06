@@ -1,8 +1,5 @@
 package com.example.anita.walkietalkie;
 
-import android.app.Activity;
-import android.os.Handler;
-
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -38,7 +35,30 @@ public class InPacket {
         return new String(str);
     }
 
+    public String readString() throws Exception {
+        return readString(readShort());
+    }
+
     public Boolean readBool() throws Exception {
         return readByte() == 1;
+    }
+
+    public byte[] readByteBuffer() throws Exception {
+        byte[] ret = new byte[buffer.remaining()];
+        buffer.get(ret);
+        return ret;
+    }
+/*
+    public byte[] readByteBuffer() throws Exception {
+        int res = readInt();
+        return readByteBuffer(res);
+    }*/
+
+    public int readInt() throws Exception {
+        int b1 = readByte();
+        int b2 = readByte();
+        int b3 = readByte();
+        int b4 = readByte();
+        return b1 | (b2 << 8) | (b3 << 16) | (b4 << 24);
     }
 }

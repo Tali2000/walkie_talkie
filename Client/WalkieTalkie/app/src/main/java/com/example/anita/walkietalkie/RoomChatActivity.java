@@ -2,8 +2,10 @@ package com.example.anita.walkietalkie;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 
 public class RoomChatActivity extends AppCompatActivity implements View.OnClickListener{
@@ -29,6 +32,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     private EditText newPartiName;
 
     private MediaRecorder mRecorder;
+    private MediaPlayer mPlayer;
     private String mFileName = null;
     private static final String LOG_TAG = "Record_log";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
@@ -74,7 +78,15 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         }
 
         recordButton = (Button)findViewById(R.id.recordButton);
+
+        //create a directory of the records on the device
+        File mydir = new File(Environment.getExternalStorageDirectory(), Session.getApplicationName());
+        if (!mydir.exists())
+            if (!mydir.mkdirs())
+                Log.d("App", "failed to create directory");
+
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/" + Session.getApplicationName();
         mFileName += "/walkieTalkie_record.wav";
 
         recordButton.setOnTouchListener(new View.OnTouchListener(){

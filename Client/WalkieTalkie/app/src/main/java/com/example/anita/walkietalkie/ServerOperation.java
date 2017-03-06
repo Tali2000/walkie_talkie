@@ -1,12 +1,15 @@
 package com.example.anita.walkietalkie;
 
-
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.TextView;
-import java.io.IOException;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public enum ServerOperation {
     SIGNIN(0) {
@@ -299,6 +302,35 @@ public enum ServerOperation {
                         case 7: //fail
                             break;
                     }
+                }
+            });
+        }
+    },
+    GETRECORD(12) { //TODO
+        @Override
+        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
+            String roomName = packet.readString();
+            String senderName = packet.readString();
+            if (senderName == "")
+                senderName = "anonymous";
+            final byte[] record = packet.readByteBuffer();
+            //write to file
+            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName() + "/" + roomName + "/" +
+                    String.valueOf(System.currentTimeMillis()) + senderName + ".wav";
+            //create a directory of the records on the device
+            File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName(),
+                    roomName);
+            if (!mydir.exists())
+                if (!mydir.mkdirs())
+                    Log.d("App", "failed to create directory");
+            FileOutputStream fos = new FileOutputStream(filePath);
+            fos.write(record);
+            fos.close();
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
                 }
             });
         }
