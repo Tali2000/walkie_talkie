@@ -245,6 +245,7 @@ namespace WalkieTalkieServer
                 {
                     client.CurrRoomId = query.Get<long>("id");
                     outP.WriteByte((byte)ResponseType.SUCCESS);
+                    outP.WriteString(roomname);
                     outP.WriteBool(client.Id == query.Get<long>("adminID"));
                 }
                 else
