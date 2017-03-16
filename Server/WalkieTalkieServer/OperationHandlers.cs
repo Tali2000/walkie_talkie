@@ -292,57 +292,28 @@ namespace WalkieTalkieServer
             s.Send(outP);
         }
 
-        public static void SetDistortionType(Session s, InPacket p)
-        {
-            byte distortion = p.ReadByte();
-            Client client = Program.Server.GetClient(s.Id);
-            OutPacket outP = new OutPacket(ServerOperation.SET_DISTORTION);
-            if (!Enum.IsDefined(typeof(DistortionType), distortion))
-            {
-                outP.WriteByte((byte)ResponseType.DOESNT_EXIST);
-                s.Send(outP);
-                return;
-            }
-            client.ExecuteNonQuery($"UPDATE participants SET distortion={distortion} WHERE roomID={client.CurrRoomId} AND participantID={client.Id};");
-            using (Query query = client.ExecuteQuery($"SELECT distortion FROM participants WHERE roomID={client.CurrRoomId} AND participantID={client.Id};"))
-            {
-                query.NextRow();
-                if (query.Get<int>("distortion") == distortion)
-                    outP.WriteByte((byte)ResponseType.SUCCESS);
-                else
-                    outP.WriteByte((byte)ResponseType.FAIL);
-            }
-            s.Send(outP);
-        }
-
         public static void VoiceMessage(Session s, InPacket p)
         {
+            byte distortion = p.ReadByte();
             byte[] message = p.ReadBuffer(p.ReadInt());
             Client client = Program.Server.GetClient(s.Id);
             OutPacket outP = new OutPacket(ServerOperation.VOICE_MESSAGE);
 
+            if (!Enum.IsDefined(typeof(DistortionType), distortion))
+                distortion = (byte)DistortionType.NONE;
+
             Directory.CreateDirectory(@"C:\WalkieTalkie");
             string filePath = @"C:\WalkieTalkie\" + client.Id.ToString() + ".wav";
             File.WriteAllBytes(filePath, message);
-            //if(!VoiceHandling.IsPlayable(filePath))
-            //{
-            //    outP.WriteByte((byte)ResponseType.WRONG_DETAILS);
-            //    s.Send(outP);
-            //    return;
-            //}
-            List<long> participants = GetParticipants(client);
-            string senderUsername = "";
-            Query query1 = client.ExecuteQuery($"SELECT isAnonymous FROM rooms WHERE id={client.CurrRoomId};");
-            query1.NextRow();
-            if (!query1.Get<bool>("isAnonymous"))
+            if (!VoiceHandling.IsWave(filePath))
             {
-                query1.Dispose();
-                using (Query query2 = client.ExecuteQuery($"SELECT username FROM users WHERE id={client.Id};"))
-                    if(query2.NextRow())
-                        senderUsername = query2.Get<string>("username");
+                outP.WriteByte((byte)ResponseType.WRONG_DETAILS);
+                s.Send(outP);
+                return;
             }
+            List<long> participants = GetParticipants(client);
 
-            if (SendVoiceMessage(participants, filePath, senderUsername, client))
+            if (SendVoiceMessage(participants, filePath, client, distortion))
                 outP.WriteByte((byte)ResponseType.SUCCESS);
             else
                 outP.WriteByte((byte)ResponseType.FAIL);
@@ -351,7 +322,7 @@ namespace WalkieTalkieServer
         }
 
         // Sends the voice message to all room's participants
-        private static bool SendVoiceMessage(List<long> participants, string path, string senderUsername, Client client)
+        private static bool SendVoiceMessage(List<long> participants, string path, Client client, byte distortion)
         {
             OutPacket outP = new OutPacket(ServerOperation.SEND_VOICE_MESSAGE);
             using (Query query = client.ExecuteQuery($"SELECT roomname FROM rooms WHERE id={client.CurrRoomId};"))
@@ -359,17 +330,23 @@ namespace WalkieTalkieServer
                 query.NextRow();
                 outP.WriteString(query.Get<string>("roomname"));
             }
+
+            string senderUsername = "";
+            Query query1 = client.ExecuteQuery($"SELECT isAnonymous FROM rooms WHERE id={client.CurrRoomId};");
+            query1.NextRow();
+            if (!query1.Get<bool>("isAnonymous"))
+            {
+                query1.Dispose();
+                using (Query query2 = client.ExecuteQuery($"SELECT username FROM users WHERE id={client.Id};"))
+                    if (query2.NextRow())
+                        senderUsername = query2.Get<string>("username");
+            }
             if (senderUsername.Length != 0)
                 outP.WriteString(senderUsername);
 
-            using (Query query = client.ExecuteQuery($"SELECT distortion FROM participants WHERE participantID={client.Id};"))
-            {
-                query.NextRow();
-                VoiceHandling.Distort(path, (DistortionType)query.Get<int>("distortion"));
-            }
+            VoiceHandling.Distort(path, (DistortionType)distortion);
 
             byte[] message = File.ReadAllBytes(path);
-            //outP.WriteInt(message.Length);
             outP.WriteBuffer(message);
             foreach (long id in participants)
                 if (id != client.Id && Program.Server.IsConnected(id))

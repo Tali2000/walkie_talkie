@@ -18,7 +18,7 @@
     {
         NONE,
         ECHO,
-        HELIUM_BALL,
+        CHIPMUNKS,
         LOW_VOICE,
         METALIC,
         CRAZY_BABY

@@ -1,5 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Runtime.InteropServices;
 using System.IO;
+using System.Diagnostics;
 using System.Media;
 using System.Speech.Synthesis;
 using WalkieTalkieServer.Networking.Definitions;
@@ -8,18 +13,48 @@ namespace WalkieTalkieServer
 {
     public static class VoiceHandling
     {
-        public static bool IsPlayable(string path)
+        [DllImport(@"urlmon.dll", CharSet = CharSet.Auto)]
+        private extern static System.UInt32 FindMimeFromData(
+            System.UInt32 pBC,
+            [MarshalAs(UnmanagedType.LPStr)] System.String pwzUrl,
+            [MarshalAs(UnmanagedType.LPArray)] byte[] pBuffer,
+            System.UInt32 cbSize,
+            [MarshalAs(UnmanagedType.LPStr)] System.String pwzMimeProposed,
+            System.UInt32 dwMimeFlags,
+            out System.UInt32 ppwzMimeOut,
+            System.UInt32 dwReserverd
+        );
+
+        private static string getMimeFromFile(string filename)
         {
-            SoundPlayer sp = new SoundPlayer(path);
+            if (!File.Exists(filename))
+                throw new FileNotFoundException(filename + " not found");
+            byte[] buffer = new byte[256];
+            using (FileStream fs = new FileStream(filename, FileMode.Open))
+            {
+                if (fs.Length >= 256)
+                    fs.Read(buffer, 0, 256);
+                else
+                    fs.Read(buffer, 0, (int)fs.Length);
+            }
             try
             {
-                sp.Play();
-                return true;
+                System.UInt32 mimetype;
+                FindMimeFromData(0, null, buffer, 256, null, 0, out mimetype, 0);
+                System.IntPtr mimeTypePtr = new IntPtr(mimetype);
+                string mime = Marshal.PtrToStringUni(mimeTypePtr);
+                Marshal.FreeCoTaskMem(mimeTypePtr);
+                return mime;
             }
             catch
             {
-                return false;
+                return "unknown/unknown";
             }
+        }
+
+        public static bool IsWave(string FileName)
+        {
+            return ("audio/wav" == getMimeFromFile(FileName));
         }
 
         public static void Distort(string path, DistortionType distortion)
@@ -29,7 +64,7 @@ namespace WalkieTalkieServer
                 case DistortionType.ECHO:
                     MakeDistortion(path, "echo 0.8 0.9 1000 0.3 1800 0.25");
                     break;
-                case DistortionType.HELIUM_BALL:
+                case DistortionType.CHIPMUNKS:
                     MakeDistortion(path, "speed 1.6");
                     break;
                 case DistortionType.LOW_VOICE:

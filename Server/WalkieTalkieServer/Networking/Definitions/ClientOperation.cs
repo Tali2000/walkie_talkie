@@ -12,7 +12,6 @@
         GET_CONTACTS,
         GET_ROOMS,
         GET_PARTICIPANTS,
-        SET_DISTORTION,
         SEND_VOICE_MESSAGE
     }
 }
