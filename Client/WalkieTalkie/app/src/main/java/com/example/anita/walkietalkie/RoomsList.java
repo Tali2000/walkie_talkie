@@ -2,25 +2,26 @@ package com.example.anita.walkietalkie;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.io.IOException;
+
 public class RoomsList {
-    public final static String ROOMNAME = "com.example.anita.walkietalkie";
     private ListView roomList;
     private ArrayAdapter<String> adapter;
 
     public RoomsList(final Activity activity, String[] values) {
-        roomList = (ListView) activity.findViewById(R.id.roomList);;
+        roomList = (ListView) activity.findViewById(R.id.roomList);
 
         // Define a new Adapter
         // First parameter - Context
         // Second parameter - Layout for the row
         // Third parameter - ID of the TextView to which the data is written
         // Forth - the Array of data
-
 
         adapter = new ArrayAdapter<String>(activity,
                 android.R.layout.simple_list_item_1, android.R.id.text1, values);
@@ -35,10 +36,13 @@ public class RoomsList {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // ListView Clicked item value
-                String itemValue = (String) roomList.getItemAtPosition(position);
-                Intent intent = new Intent(activity, RoomChatActivity.class);
-                intent.putExtra(ROOMNAME, itemValue);
-                activity.startActivity(intent);
+                String roomName = (String) roomList.getItemAtPosition(position);
+                final Handler handler = new Handler();
+                try {
+                    Session.getInstance(activity, handler).SendCurrentRoom(roomName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
         });

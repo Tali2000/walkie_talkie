@@ -14,7 +14,6 @@ public class InPacket {
         buffer = ByteBuffer.allocate(data.length);
         buffer.put(data);
         buffer.position(0);
-
     }
 
     public byte readByte() throws Exception {

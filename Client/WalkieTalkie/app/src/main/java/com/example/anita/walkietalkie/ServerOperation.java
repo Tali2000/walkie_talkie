@@ -192,16 +192,16 @@ public enum ServerOperation {
                 public void run() {
                     if(isRoom == 0){ //if room exists
                         Boolean isAdmin = false;
+                        String roomname = "";
                         try {
+                            roomname = packet.readString();
                             isAdmin = packet.readBool();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                         Intent intent = new Intent(activity, RoomChatActivity.class);
-                        intent.putExtra("IS_ADMIN", isAdmin ? "1":"0"); //TODO!!!!!!!!!!!!!!!!!!!!!!!
-                    }
-                    else{ //if room doesn't exists
-                        Intent intent = new Intent(activity,RoomsList.class);
+                        intent.putExtra("ROOMNAME", roomname);
+                        intent.putExtra("ISADMIN", isAdmin);
                         activity.startActivity(intent);
                     }
                 }
@@ -315,8 +315,8 @@ public enum ServerOperation {
                 senderName = "anonymous";
             final byte[] record = packet.readByteBuffer();
             //write to file
-            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName() + "/" + roomName + "/" +
-                    String.valueOf(System.currentTimeMillis()) + senderName + ".wav";
+            String fileName = String.valueOf(System.currentTimeMillis()) + senderName + ".wav";
+            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName() + "/" + roomName + "/" + fileName;
             //create a directory of the records on the device
             File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName(),
                     roomName);
@@ -326,6 +326,8 @@ public enum ServerOperation {
             FileOutputStream fos = new FileOutputStream(filePath);
             fos.write(record);
             fos.close();
+
+            RoomChatActivity.getInstance().setNewRecordToPlay(fileName);
 
             handler.post(new Runnable() {
                 @Override

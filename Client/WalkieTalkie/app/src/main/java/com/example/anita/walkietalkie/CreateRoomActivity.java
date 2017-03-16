@@ -29,6 +29,7 @@ public class CreateRoomActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_room);
 
+        //spinner initialize
         spinner = (Spinner)findViewById(R.id.maxTimeSpinner);
         adapter = ArrayAdapter.createFromResource(this, R.array.maxTime,android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

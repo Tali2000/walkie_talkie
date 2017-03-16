@@ -15,51 +15,73 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class RoomChatActivity extends AppCompatActivity implements View.OnClickListener{
+    private static RoomChatActivity instance;
     private String roomname;
     private TextView textViewRoomname;
     private Boolean isAdmin = false;
-    private Button addParticipant, recordButton;
+    private Button addParticipant, recordButton, playButton;
     private ListView participantsList;
     private EditText newPartiName;
+    private ArrayList<String> recordsToPlay;
 
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
     private String mFileName = null;
     private static final String LOG_TAG = "Record_log";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    Spinner spinner;
+    ArrayAdapter<CharSequence> adapter;
+    byte voiceType;
+
+    public static RoomChatActivity getInstance() {
+        if (instance == null)
+            instance = new RoomChatActivity();
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_chat);
 
-        //get roomname
-        Intent intent = getIntent();
-        roomname = intent.getStringExtra(RoomsList.ROOMNAME);
+        final Activity activity = this;
+        final Handler handler = new Handler();
+
+        //get roomname and isAdmin
+        Bundle extras = getIntent().getExtras();
+        roomname = extras.getString("ROOMNAME");
+        isAdmin = extras.getBoolean("ISADMIN");
         textViewRoomname = (TextView)findViewById(R.id.textViewRoomname);
         textViewRoomname.setText(roomname);
 
-        final Activity activity = this;
-        final Handler handler = new Handler();
-        try {
-            Session.getInstance(activity, handler).SendCurrentRoom(roomname);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //spinner initialize
+        spinner = (Spinner)findViewById(R.id.spinnerVoiceType);
+        adapter = ArrayAdapter.createFromResource(this, R.array.voiceType,android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(getBaseContext(), parent.getItemAtPosition(position)+" selected", Toast.LENGTH_LONG).show();
+                voiceType = (byte)position;
+            }
 
-        //check if admin
-        intent = getIntent();
-        //TODO isAdmin = intent.getStringExtra("IS_ADMIN") == "1" ? true : false;
-        isAdmin = true;
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         addParticipant = (Button)findViewById(R.id.ButtonAddParticipantToRoom);
         newPartiName = (EditText)findViewById(R.id.editTextNewParticipant);
@@ -97,12 +119,23 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                 else if(event.getAction() == MotionEvent.ACTION_UP){
                     stopRecording();
                     try{
-                        Session.getInstance(activity, handler).SendRecord(mFileName);
+                        Session.getInstance(activity, handler).SendRecord(mFileName, voiceType);
                     }catch (IOException e){
                         e.printStackTrace();
                     }
                 }
                 return false;
+            }
+        });
+
+        //initialize mediaPlayer
+        recordsToPlay = new ArrayList<String>();
+        playButton = (Button) findViewById(R.id.buttonPlay);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+
             }
         });
     }
@@ -159,7 +192,32 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                 permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 break;
         }
-        if (!permissionToRecordAccepted ) finish();
+        if (!permissionToRecordAccepted) finish();
 
+    }
+
+    public void playAudio(String file) throws Exception{
+        if(mPlayer != null){
+            mPlayer.stop();
+            mPlayer.release();
+        }
+        mPlayer = new MediaPlayer();
+        mPlayer.setDataSource(file);
+        mPlayer.prepare();
+        mPlayer.start();
+        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {//when sound ends
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mPlayer.release();
+            }
+        });
+    }
+
+    public void setNewRecordToPlay(String file){
+        recordsToPlay.add(file);
+    }
+
+    private void deleteRecord(){
+        recordsToPlay.remove(0);
     }
 }

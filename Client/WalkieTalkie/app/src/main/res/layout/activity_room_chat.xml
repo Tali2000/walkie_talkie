@@ -65,15 +65,6 @@
         android:layout_marginStart="39dp"
         android:id="@+id/textViewAddParticipantMessage" />
 
-    <Button
-        android:text="tap and hold to record"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/recordButton"
-        android:layout_below="@+id/textViewAddParticipantMessage"
-        android:layout_alignStart="@+id/ButtonAddParticipantToRoom"
-        android:layout_marginTop="18dp" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -82,12 +73,37 @@
         android:layout_toEndOf="@+id/textViewAddParticipantMessage"
         android:layout_marginStart="10dp" />
 
-    <TextView
+    <Button
+        android:text="Play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textViewParticipants"
+        android:layout_alignStart="@+id/recordButton"
+        android:layout_marginStart="27dp"
+        android:id="@+id/buttonPlay" />
+
+    <Button
+        android:text="tap and hold to record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/recordButton"
+        android:layout_above="@+id/buttonPlay"
+        android:layout_alignParentEnd="true" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:id="@+id/spinnerVoiceType"
         android:layout_below="@+id/textViewParticipants"
-        android:layout_alignStart="@+id/textViewParticipants"
-        android:layout_marginTop="32dp"
-        android:id="@+id/textViewTalkingUser" />
+        android:layout_toEndOf="@+id/ParticipantsList" />
+
+    <TextView
+        android:text="Select voice type..."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewSpinnerVoiceType"
+        android:layout_alignBottom="@+id/spinnerVoiceType"
+        android:layout_alignEnd="@+id/textViewRoomname" />
 
 </RelativeLayout>

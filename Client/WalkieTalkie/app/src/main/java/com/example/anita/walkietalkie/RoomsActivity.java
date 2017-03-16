@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 public class RoomsActivity extends Activity implements View.OnClickListener {
     Button createRoomButton, generalButton, contactsButton;
-    ListView contactList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +27,6 @@ public class RoomsActivity extends Activity implements View.OnClickListener {
         contactsButton = (Button) findViewById(R.id.contactsButton);
         contactsButton.setOnClickListener(this);
 
-        contactList = (ListView) findViewById(R.id.contactList);
         final Activity activity = this;
         final Handler handler = new Handler();
         try {

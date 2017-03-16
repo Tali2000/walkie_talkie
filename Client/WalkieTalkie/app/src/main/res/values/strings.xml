@@ -8,4 +8,12 @@
         <item>50</item>
         <item>60</item>
     </string-array>
+    <string-array name="voiceType">
+        <item>None</item>
+        <item>Echo</item>
+        <item>Helium Ball</item>
+        <item>Low voice</item>
+        <item>Metalic</item>
+        <item>Crazy Baby</item>
+    </string-array>
 </resources>
