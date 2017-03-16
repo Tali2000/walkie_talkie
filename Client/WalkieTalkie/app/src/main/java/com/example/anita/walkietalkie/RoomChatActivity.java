@@ -35,7 +35,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     private Button addParticipant, recordButton, playButton;
     private ListView participantsList;
     private EditText newPartiName;
-    private ArrayList<String> recordsToPlay;
+    private ArrayList<String> recordsToPlay; //array of paths with records to play
 
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
@@ -83,6 +83,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+        //admin's buttons
         addParticipant = (Button)findViewById(R.id.ButtonAddParticipantToRoom);
         newPartiName = (EditText)findViewById(R.id.editTextNewParticipant);
         if(isAdmin){
@@ -91,6 +92,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
             newPartiName.setVisibility(View.VISIBLE);
             addParticipant.setOnClickListener(this);
         }
+
         //initialize paricipants list
         participantsList = (ListView)findViewById(R.id.ParticipantsList);
         try {
@@ -98,8 +100,6 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        recordButton = (Button)findViewById(R.id.recordButton);
 
         //create a directory of the records on the device
         File mydir = new File(Environment.getExternalStorageDirectory(), Session.getApplicationName());
@@ -111,13 +111,18 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         mFileName += "/" + Session.getApplicationName();
         mFileName += "/walkieTalkie_record.wav";
 
+        //initialize record button
+        recordButton = (Button)findViewById(R.id.recordButton);
         recordButton.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN)
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
                     startRecording();
+                    recordButton.setText("recording...");
+                }
                 else if(event.getAction() == MotionEvent.ACTION_UP){
                     stopRecording();
+                    recordButton.setText("tap and hold to record");
                     try{
                         Session.getInstance(activity, handler).SendRecord(mFileName, voiceType);
                     }catch (IOException e){
@@ -128,16 +133,8 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        //initialize mediaPlayer
         recordsToPlay = new ArrayList<String>();
         playButton = (Button) findViewById(R.id.buttonPlay);
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO
-
-            }
-        });
     }
 
     private void startRecording() {
@@ -174,6 +171,16 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                     //TODO
                     Session.getInstance(activity, handler).AddParticipant(newPartiName.getText().toString());
                     break;
+                case R.id.buttonPlay:
+                    if(playButton.getText().toString() == "play" && recordsToPlay.size() > 0){
+                        playAudio(recordsToPlay.get(0));
+                        playButton.setText("pause");
+                    }
+                    else if(playButton.getText().toString() == "pause"){
+                        mPlayer.pause();
+                        playButton.setText("play");
+                    }
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -193,27 +200,28 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                 break;
         }
         if (!permissionToRecordAccepted) finish();
-
     }
 
-    public void playAudio(String file) throws Exception{
+    public void playAudio(String filePath) throws Exception{
         if(mPlayer != null){
             mPlayer.stop();
             mPlayer.release();
         }
         mPlayer = new MediaPlayer();
-        mPlayer.setDataSource(file);
+        mPlayer.setDataSource(filePath);
         mPlayer.prepare();
         mPlayer.start();
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {//when sound ends
             @Override
             public void onCompletion(MediaPlayer mp) {
+                deleteRecord();
                 mPlayer.release();
             }
         });
     }
 
     public void setNewRecordToPlay(String file){
+        //TODO - sound notification
         recordsToPlay.add(file);
     }
 

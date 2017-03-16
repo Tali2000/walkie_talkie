@@ -286,7 +286,7 @@ public enum ServerOperation {
             });
         }
     },
-    SENDRECOED(11) {
+    SENDRECOED(10) {
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             final byte result = packet.readByte();
@@ -306,7 +306,7 @@ public enum ServerOperation {
             });
         }
     },
-    GETRECORD(12) { //TODO
+    GETRECORD(11) { //TODO
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             String roomName = packet.readString();
@@ -327,7 +327,7 @@ public enum ServerOperation {
             fos.write(record);
             fos.close();
 
-            RoomChatActivity.getInstance().setNewRecordToPlay(fileName);
+            RoomChatActivity.getInstance().setNewRecordToPlay(filePath);
 
             handler.post(new Runnable() {
                 @Override
