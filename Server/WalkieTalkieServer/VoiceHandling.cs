@@ -54,51 +54,43 @@ namespace WalkieTalkieServer
 
         public static bool IsWave(string FileName)
         {
-            return ("audio/wav" == getMimeFromFile(FileName));
+            return "audio/wav" == getMimeFromFile(FileName);
         }
 
-        public static void Distort(string path, DistortionType distortion)
+        public static string Distort(string path, DistortionType distortion)
         {
             switch(distortion)
             {
                 case DistortionType.ECHO:
-                    MakeDistortion(path, "echo 0.8 0.9 1000 0.3 1800 0.25");
-                    break;
+                    return MakeDistortion(path, "echo 0.8 0.9 1000 0.3 1800 0.25");
                 case DistortionType.CHIPMUNKS:
-                    MakeDistortion(path, "speed 1.6");
-                    break;
+                    return MakeDistortion(path, "speed 1.6");
                 case DistortionType.LOW_VOICE:
-                    MakeDistortion(path, "speed 0.7");
-                    break;
+                    return MakeDistortion(path, "speed 0.7");
                 case DistortionType.METALIC:
-                    MakeDistortion(path, "stretch 1.7");
-                    break;
+                    return MakeDistortion(path, "stretch 1.7");
                 case DistortionType.CRAZY_BABY:
-                    MakeDistortion(path, "stretch 1.5 speed 1.6");
-                    break;
+                    return MakeDistortion(path, "stretch 1.5 speed 1.6");
                 case DistortionType.NONE:
                 default:
-                    break;
+                    return path;
             }
         }
 
-        private static void MakeDistortion(string path, string effect)
+        private static string MakeDistortion(string path, string effect)
         {
-            string tempFile = "output" + path;
+            string tempFile = path.Replace(".wav", "output.wav");
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = @"C:\Program Files (x86)\sox-14-4-2\sox.exe";
-            startInfo.Arguments = path + " " + tempFile + " " + effect;
+            startInfo.Arguments = $"{path} {tempFile} {effect}";
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = false;
             startInfo.WorkingDirectory = @"C:\Program Files (x86)\sox-14-4-2";
             using (Process soxProc = Process.Start(startInfo))
-            {
                 soxProc.WaitForExit();
-            }
             File.Delete(path);
-            File.Copy(tempFile, path);
-            File.Delete(tempFile);
+            return tempFile;
         }
     }
 }
