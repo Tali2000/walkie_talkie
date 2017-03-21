@@ -142,7 +142,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
         mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
 
         try {
             mRecorder.prepare();
@@ -228,4 +228,17 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     private void deleteRecord(){
         recordsToPlay.remove(0);
     }
+
+    // Call Back method  to get the Message form other Activity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if(requestCode==2)
+        {
+            //do the things u wanted
+        }
+    }
+
 }

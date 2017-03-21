@@ -9,8 +9,16 @@ public class InPacket {
 
     public InPacket(InputStream stream) throws Exception {
         DataInputStream dataStream = new DataInputStream(stream);
-        byte[] data = new byte[dataStream.available()];
-        dataStream.readFully(data);
+        int tlength = dataStream.readInt();
+        int length = (tlength&0xFF)<<24 | (tlength&0xFF00)<<8 | (tlength&0xFF0000)>>8 | (tlength>>24)&0xFF;
+        byte[] data = new byte[0];
+        while (data.length < length) {
+            int len = Math.min(dataStream.available(), length - data.length);
+            byte[] temp = new byte[data.length + len];
+            System.arraycopy(data, 0, temp, 0, data.length);
+            dataStream.read(temp, data.length, len);
+            data = temp;
+        }
         buffer = ByteBuffer.allocate(data.length);
         buffer.put(data);
         buffer.position(0);

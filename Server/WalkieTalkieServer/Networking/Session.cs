@@ -79,7 +79,10 @@ namespace Common.Networking
                 return false;
             try
             {
-                return m_socket.Send(buffer) == buffer.Length;
+                byte[] final = new byte[buffer.Length + 4];
+                Buffer.BlockCopy(BitConverter.GetBytes((int)buffer.Length), 0, final, 0, 4);
+                Buffer.BlockCopy(buffer, 0, final, 4, buffer.Length);
+                return m_socket.Send(final) == final.Length;
             }
             catch { }
             return false;

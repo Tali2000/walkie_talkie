@@ -344,7 +344,7 @@ namespace WalkieTalkieServer
             if (senderUsername.Length != 0)
                 outP.WriteString(senderUsername);
 
-            VoiceHandling.Distort(path, (DistortionType)distortion);
+            path = VoiceHandling.Distort(path, (DistortionType)distortion);
 
             byte[] message = File.ReadAllBytes(path);
             outP.WriteBuffer(message);
