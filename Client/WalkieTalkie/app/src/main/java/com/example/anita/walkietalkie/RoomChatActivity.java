@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class RoomChatActivity extends AppCompatActivity implements View.OnClickListener{
-    private static RoomChatActivity instance;
     private String roomname;
     private TextView textViewRoomname;
     private Boolean isAdmin = false;
@@ -45,12 +44,6 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     Spinner spinner;
     ArrayAdapter<CharSequence> adapter;
     byte voiceType;
-
-    public static RoomChatActivity getInstance() {
-        if (instance == null)
-            instance = new RoomChatActivity();
-        return instance;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +102,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
 
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/" + Session.getApplicationName();
-        mFileName += "/walkieTalkie_record.wav";
+        mFileName += "/walkieTalkie_record.3gp";
 
         //initialize record button
         recordButton = (Button)findViewById(R.id.recordButton);
@@ -140,7 +133,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     private void startRecording() {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
 

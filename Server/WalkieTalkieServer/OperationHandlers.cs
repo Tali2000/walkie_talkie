@@ -1,6 +1,8 @@
 ﻿using Common.Networking;
 using Common.Networking.Definitions;
 using Data;
+using MediaToolkit;
+using MediaToolkit.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -304,7 +306,10 @@ namespace WalkieTalkieServer
 
             Directory.CreateDirectory(@"C:\WalkieTalkie");
             string filePath = @"C:\WalkieTalkie\" + client.Id.ToString() + ".wav";
-            File.WriteAllBytes(filePath, message);
+            File.WriteAllBytes($"{filePath}.temp", message);
+            using (Engine engine = new Engine())
+                engine.Convert(new MediaFile($"{filePath}.temp"), new MediaFile(filePath));
+            File.Delete($"{filePath}.temp");
             if (!VoiceHandling.IsWave(filePath))
             {
                 outP.WriteByte((byte)ResponseType.WRONG_DETAILS);

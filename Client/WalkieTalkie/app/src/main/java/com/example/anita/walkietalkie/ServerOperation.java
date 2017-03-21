@@ -327,10 +327,7 @@ public enum ServerOperation {
             fos.write(record);
             fos.close();
 
-            //RoomChatActivity.getInstance().setNewRecordToPlay(filePath);
-            Intent intent = new Intent();
-            intent.putExtra("filePath", filePath);
-
+            //TODO
 
             handler.post(new Runnable() {
                 @Override
