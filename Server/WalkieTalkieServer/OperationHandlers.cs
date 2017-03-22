@@ -44,6 +44,19 @@ namespace WalkieTalkieServer
             else
                 outP.WriteByte((byte)ResponseType.WRONG_DETAILS);
             s.Send(outP);
+            s.Send(SendDistortion());
+        }
+
+        private static OutPacket SendDistortion()
+        {
+            OutPacket outP = new OutPacket(ServerOperation.SEND_DISTORTIONS);
+            outP.WriteByte((byte)Enum.GetValues(typeof(DistortionType)).Length);
+            foreach(string distortion in Enum.GetNames(typeof(DistortionType)))
+            {
+                outP.WriteShort((short)distortion.Length);
+                outP.WriteString(distortion);
+            }
+            return outP;
         }
 
         public static void SignUp(Session s, InPacket p)
