@@ -327,7 +327,7 @@ public enum ServerOperation {
             fos.write(record);
             fos.close();
 
-            //TODO
+            PlayRecordsHelper.getInstance().SetNewRecord(roomName, filePath);
 
             handler.post(new Runnable() {
                 @Override

@@ -69,9 +69,8 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(getBaseContext(), parent.getItemAtPosition(position)+" selected", Toast.LENGTH_LONG).show();
-                voiceType = (byte)position;
+                voiceType = (byte)position; //TODO get from server
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
@@ -128,6 +127,19 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
 
         recordsToPlay = new ArrayList<String>();
         playButton = (Button) findViewById(R.id.buttonPlay);
+
+        new Thread(new Runnable() {
+            String newRecordPath;
+            @Override
+            public void run() {
+                while (true) {
+                    newRecordPath = PlayRecordsHelper.getInstance().CheckForNewRecord(roomname);
+                    if(newRecordPath != null){
+                        setNewRecordToPlay(newRecordPath);
+                    }
+                }
+            }
+        }).start();
     }
 
     private void startRecording() {
