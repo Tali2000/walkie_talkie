@@ -44,6 +44,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     Spinner spinner;
     ArrayAdapter<CharSequence> adapter;
     byte voiceType;
+    int recordPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +128,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
 
         recordsToPlay = new ArrayList<String>();
         playButton = (Button) findViewById(R.id.buttonPlay);
+        playButton.setOnClickListener(this);
 
         new Thread(new Runnable() {
             String newRecordPath;
@@ -177,12 +179,12 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                     Session.getInstance(activity, handler).AddParticipant(newPartiName.getText().toString());
                     break;
                 case R.id.buttonPlay:
-                    if(playButton.getText().toString() == "play" && recordsToPlay.size() > 0){
+                    if(playButton.getText().toString().equals("play") && recordsToPlay.size() > 0){
                         playAudio(recordsToPlay.get(0));
                         playButton.setText("pause");
                     }
-                    else if(playButton.getText().toString() == "pause"){
-                        mPlayer.pause();
+                    else if(playButton.getText().toString().equals("pause")){
+                        pauseAudio();
                         playButton.setText("play");
                     }
                     break;
@@ -215,14 +217,22 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         mPlayer = new MediaPlayer();
         mPlayer.setDataSource(filePath);
         mPlayer.prepare();
+        mPlayer.seekTo(recordPosition);
         mPlayer.start();
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {//when sound ends
             @Override
             public void onCompletion(MediaPlayer mp) {
+                recordPosition = 0;
                 deleteRecord();
                 mPlayer.release();
+                playButton.setText("play");
             }
         });
+    }
+
+    public void pauseAudio() throws Exception{
+        mPlayer.pause();
+        recordPosition = mPlayer.getCurrentPosition();
     }
 
     public void setNewRecordToPlay(String file){
@@ -233,17 +243,4 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     private void deleteRecord(){
         recordsToPlay.remove(0);
     }
-
-    // Call Back method  to get the Message form other Activity
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        // check if the request code is same as what is passed  here it is 2
-        if(requestCode==2)
-        {
-            //do the things u wanted
-        }
-    }
-
 }

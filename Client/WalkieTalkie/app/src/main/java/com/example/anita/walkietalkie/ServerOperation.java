@@ -328,13 +328,6 @@ public enum ServerOperation {
             fos.close();
 
             PlayRecordsHelper.getInstance().SetNewRecord(roomName, filePath);
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-
-                }
-            });
         }
     },
     DEFAULT(-1) {
