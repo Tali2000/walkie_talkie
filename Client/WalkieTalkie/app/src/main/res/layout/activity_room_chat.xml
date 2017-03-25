@@ -98,7 +98,7 @@
         android:id="@+id/buttonPlay"
         android:layout_alignBaseline="@+id/textViewRecord"
         android:layout_alignBottom="@+id/textViewRecord"
-        android:layout_alignStart="@+id/textViewAddParticipantMessage" />
+        android:layout_alignStart="@+id/textViewAddParticipantMessage"/>
 
     <TextView
         android:text="Select voice type..."

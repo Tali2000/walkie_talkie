@@ -18,28 +18,34 @@ public class PlayRecordsHelper {
     }
 
     private PlayRecordsHelper() {
-        records = new LinkedHashMap<String, ArrayList<String>>();
+        records = new LinkedHashMap<>();
     }
 
-    public String CheckForNewRecord(String roomName){
-        String ret;
-        if(records.get(roomName) != null && !records.get(roomName).isEmpty() && records.containsKey(roomName)){
-            ret = records.get(roomName).get(0);
-            records.get(roomName).remove(0);
-            return ret;
+    public String CheckForNewRecord(String roomname){
+        String ret = null;
+        if(records.get(roomname) != null && !records.get(roomname).isEmpty() && records.containsKey(roomname)){
+            ret = records.get(roomname).get(0);
+            records.get(roomname).remove(0);
+            //removeFirstRecord(roomname);
         }
-        return null;
+        return ret;
     }
 
     public void SetNewRecord(String roomname, String filePath){
         ArrayList temp = new ArrayList<String>();
-        if(records.containsKey(roomname)){
-            if(records.get(roomname) != null){
-                temp = records.get(roomname);
-                records.remove(roomname);
-            }
+        if(records.get(roomname) != null && !records.get(roomname).isEmpty() && records.containsKey(roomname)){
+            temp = records.get(roomname);
+            records.remove(roomname);
         }
         temp.add(filePath);
         records.put(roomname, temp);
+    }
+
+    private void removeFirstRecord(String roomname){
+        ArrayList temp = new ArrayList<String>();
+        temp = records.get(roomname);
+        records.remove(roomname);
+        records.get(roomname).remove(0);
+
     }
 }

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -210,10 +211,6 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void playAudio(String filePath) throws Exception{
-        if(mPlayer != null){
-            mPlayer.stop();
-            mPlayer.release();
-        }
         mPlayer = new MediaPlayer();
         mPlayer.setDataSource(filePath);
         mPlayer.prepare();
@@ -226,6 +223,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                 deleteRecord();
                 mPlayer.release();
                 playButton.setText("play");
+                //playButton.setBackgroundColor(Color.WHITE);
             }
         });
     }
@@ -237,10 +235,13 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
 
     public void setNewRecordToPlay(String file){
         //TODO - sound notification
+        //playButton.setBackgroundColor(Color.BLUE);
+        System.out.println("RRRREEEEEECCOOOORRRRRRRRRRRRDDDDDDDD");
         recordsToPlay.add(file);
     }
 
     private void deleteRecord(){
+        System.out.println("DDDDDDDEEEEEEEEEELLLLLLLEEEEEEEEETTTTTTTTTTEEEE");
         recordsToPlay.remove(0);
     }
 }
