@@ -137,6 +137,13 @@ public class Session {
         }
     }
 
+    public void SendCurrentClient(String username) throws IOException {
+        try(OutPacket packet = new OutPacket(ClientOperation.SENDCURRCHAT)){
+            packet.writeString(username);
+            Send(packet);
+        }
+    }
+
     public void GetParticipants() throws IOException{
         try(OutPacket packet = new OutPacket(ClientOperation.GETPARTICIPANTS)){
             Send(packet);

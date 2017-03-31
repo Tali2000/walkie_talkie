@@ -1,5 +1,5 @@
 package com.example.anita.walkietalkie;
-
+//TODO
 public enum ClientOperation {
     SIGNIN((byte)0),
     SIGNUP((byte)1),
@@ -11,11 +11,14 @@ public enum ClientOperation {
     GETCONTACTS((byte)7),
     GETROOMS((byte)8),
     GETPARTICIPANTS((byte)9),
-    SENDRECORD((byte)10);
+    SENDRECORD((byte)10),
+    EXITROOM((byte)13),
+    DELETEPARTICIPANT((byte)14),
+    SENDCURRCHAT((byte)15);
 
     private byte value;
 
-    private ClientOperation(byte value) {
+    ClientOperation(byte value) {
         this.value = value;
     }
 

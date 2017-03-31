@@ -2,10 +2,7 @@ package com.example.anita.walkietalkie;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -19,8 +16,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -28,13 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class RoomChatActivity extends AppCompatActivity implements View.OnClickListener{
-    private String roomname;
-    private TextView textViewRoomname;
-    private Boolean isAdmin = false;
-    private Button addParticipant, recordButton, playButton;
-    private ListView participantsList;
-    private EditText newPartiName;
+public class ClientChatActivity extends AppCompatActivity implements View.OnClickListener{
+    private String username;
+    private TextView textViewUsername;
+    private Button recordButton, playButton;
     private ArrayList<String> recordsToPlay; //array of paths with records to play
 
     private MediaRecorder mRecorder;
@@ -50,17 +42,16 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_room_chat);
+        setContentView(R.layout.activity_client_chat);
 
         final Activity activity = this;
         final Handler handler = new Handler();
 
         //get roomname and isAdmin
         Bundle extras = getIntent().getExtras();
-        roomname = extras.getString("ROOMNAME");
-        isAdmin = extras.getBoolean("ISADMIN");
-        textViewRoomname = (TextView)findViewById(R.id.textViewRoomname);
-        textViewRoomname.setText(roomname);
+        username = extras.getString("USERNAME");
+        textViewUsername = (TextView)findViewById(R.id.textViewRoomname);
+        textViewUsername.setText(username);
 
         //spinner initialize
         spinner = (Spinner)findViewById(R.id.spinnerVoiceType);
@@ -76,24 +67,6 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-
-        //admin's buttons
-        addParticipant = (Button)findViewById(R.id.ButtonAddParticipantToRoom);
-        newPartiName = (EditText)findViewById(R.id.editTextNewParticipant);
-        if(isAdmin){
-            //show the button for admin only
-            addParticipant.setVisibility(View.VISIBLE);
-            newPartiName.setVisibility(View.VISIBLE);
-            addParticipant.setOnClickListener(this);
-        }
-
-        //initialize paricipants list
-        participantsList = (ListView)findViewById(R.id.ParticipantsList);
-        try {
-            Session.getInstance(activity, handler).GetParticipants();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         //create a directory of the records on the device
         File mydir = new File(Environment.getExternalStorageDirectory(), Session.getApplicationName());
@@ -136,7 +109,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void run() {
                 while (true) {
-                    newRecordPath = PlayRecordsHelper.getInstance().CheckForNewRecord(roomname, RecordsType.ROOM);
+                    newRecordPath = PlayRecordsHelper.getInstance().CheckForNewRecord(username, RecordsType.CLIENT);
                     if(newRecordPath != null){
                         setNewRecordToPlay(newRecordPath);
                     }
@@ -174,11 +147,6 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         final Handler handler = new Handler();
         try {
             switch (v.getId()) {
-                case R.id.ButtonAddParticipantToRoom:
-                    //
-                    //TODO show popup window
-                    Session.getInstance(activity, handler).AddParticipant(newPartiName.getText().toString());
-                    break;
                 case R.id.buttonPlay:
                     if(playButton.getText().toString().equals("play") && recordsToPlay.size() > 0){
                         playAudio(recordsToPlay.get(0));

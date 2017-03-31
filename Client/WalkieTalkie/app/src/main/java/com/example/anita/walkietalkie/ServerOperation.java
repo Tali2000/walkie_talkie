@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
+//TODO show in toast messages
 public enum ServerOperation {
     SIGNIN(0) {
         @Override
@@ -81,7 +81,7 @@ public enum ServerOperation {
             });
         }
     },
-    ADDCONTACT (2){
+    ADD_CONTACT (2){
         @Override
         public void handle(InPacket packet, final Activity activity, Handler handler) throws Exception {
             final byte result = packet.readByte();
@@ -116,7 +116,7 @@ public enum ServerOperation {
             });
         }
     },
-    CREATEROOM (3){
+    CREATE_ROOM (3){
         @Override
         public void handle(InPacket packet, final Activity activity, final Handler handler) throws Exception {
             final byte result = packet.readByte();
@@ -149,7 +149,7 @@ public enum ServerOperation {
             });
         }
     },
-    ADDPARTICIPANT (4){
+    ADD_PARTICIPANT (4){
         @Override
         public void handle(InPacket packet, final Activity activity, final Handler handler) throws Exception {
             final byte result = packet.readByte();
@@ -182,7 +182,30 @@ public enum ServerOperation {
             });
         }
     },
-    SENDCURRROOM (6){
+    ALLOW_ENTERANCE (5){//TODO
+        @Override
+        public void handle(InPacket packet, final Activity activity, final Handler handler) throws Exception {
+            final byte result = packet.readByte();
+            //do it every time
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView messageView = (TextView) activity.findViewById(R.id.textViewAddParticipantMessage);
+                    switch (result) {
+                        case 0: //success
+                            break;
+                        case 7: //fail
+                            break;
+                        case 12: //already entered
+                            break;
+                        case 13: //not a participant of this room
+                            break;
+                    }
+                }
+            });
+        }
+    },
+    SEND_CURR_ROOM (6){
         @Override
         public void handle(final InPacket packet, final Activity activity, final Handler handler) throws Exception {
             final byte isRoom = packet.readByte();
@@ -286,7 +309,7 @@ public enum ServerOperation {
             });
         }
     },
-    SENDRECOED(10) {
+    SEND_RECORD(10) {
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             final byte result = packet.readByte();
@@ -301,12 +324,14 @@ public enum ServerOperation {
                             break;
                         case 7: //fail
                             break;
+                        case 16: ///cannot determine chat type
+                            break;
                     }
                 }
             });
         }
     },
-    GETRECORD(11) { //TODO
+    GET_ROOM_RECORD(11) {
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             String roomName = packet.readString();
@@ -316,7 +341,7 @@ public enum ServerOperation {
             final byte[] record = packet.readByteBuffer();
             //write to file
             String fileName = String.valueOf(System.currentTimeMillis()) + senderName + ".wav";
-            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName() + "/" + roomName + "/" + fileName;
+            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName() + "/Rooms/" + roomName + "/" + fileName;
             //create a directory of the records on the device
             File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName(),
                     roomName);
@@ -327,7 +352,105 @@ public enum ServerOperation {
             fos.write(record);
             fos.close();
 
-            PlayRecordsHelper.getInstance().SetNewRecord(roomName, filePath);
+            PlayRecordsHelper.getInstance().SetNewRecord(roomName, filePath, RecordsType.ROOM);
+        }
+    },
+    GETDISTORTIONS(12){//TODO
+        @Override
+        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            });
+        }
+    },
+    EXIT_ROOM(13){
+        @Override
+        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
+            final byte result = packet.readByte();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    switch (result) {
+                        case 0: //success
+                            break;
+                        case 1: //room doesn't exist
+                            break;
+                        case 7: //fail
+                            break;
+                        case 13: //you are a participant if this room
+                            break;
+                    }
+                }
+            });
+        }
+    },
+    REMOVE_CONTACT(14){
+        @Override
+        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
+            final byte result = packet.readByte();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    switch (result) {
+                        case 0: //success
+                            break;
+                        case 1: //username doesn't exist
+                            break;
+                        case 7: //fail
+                            break;
+                        case 11: //not in your contacts
+                            break;
+                    }
+                }
+            });
+        }
+    },
+    SEND_CURR_CHAT(15){
+        @Override
+        public void handle(final InPacket packet, final Activity activity, Handler handler) throws IOException, Exception {
+            final byte isUser = packet.readByte();
+            //do it every time
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(isUser == 0){ //if user exists
+                        String username = "";
+                        try {
+                            username = packet.readString();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Intent intent = new Intent(activity, ClientChatActivity.class);
+                        intent.putExtra("USERNAME", username);
+                        activity.startActivity(intent);
+                    }
+                }
+            });
+        }
+    },
+    GET_CLIENT_RECORD(16){
+        @Override
+        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
+            String username = packet.readString();
+            String senderName = packet.readString();
+            final byte[] record = packet.readByteBuffer();
+            //write to file
+            String fileName = String.valueOf(System.currentTimeMillis()) + senderName + ".wav";
+            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName() + "/Clients/" + username + "/" + fileName;
+            //create a directory of the records on the device
+            File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName(),
+                    username);
+            if (!mydir.exists())
+                if (!mydir.mkdirs())
+                    Log.d("App", "failed to create directory");
+            FileOutputStream fos = new FileOutputStream(filePath);
+            fos.write(record);
+            fos.close();
+
+            PlayRecordsHelper.getInstance().SetNewRecord(username, filePath, RecordsType.CLIENT);
         }
     },
     DEFAULT(-1) {

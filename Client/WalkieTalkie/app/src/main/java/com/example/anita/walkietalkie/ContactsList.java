@@ -1,18 +1,20 @@
 package com.example.anita.walkietalkie;
 
-
 import android.app.Activity;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 public class ContactsList {
     private ListView contactList;
     private ArrayAdapter<String> adapter;
 
-    public ContactsList(Activity activity, String[] values) {
+    public ContactsList(final Activity activity, String[] values) {
         contactList = (ListView) activity.findViewById(R.id.contactList);
 
         // Define a new Adapter
@@ -33,12 +35,14 @@ public class ContactsList {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-
-                // ListView Clicked item index
-                int itemPosition = position;
-
                 // ListView Clicked item value
-                String itemValue = (String) contactList.getItemAtPosition(position);
+                String username = (String) contactList.getItemAtPosition(position);
+                final Handler handler = new Handler();
+                try {
+                    Session.getInstance(activity, handler).SendCurrentClient(username);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
         });

@@ -65,14 +65,6 @@
         android:layout_marginStart="39dp"
         android:id="@+id/textViewAddParticipantMessage" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textViewRecord"
-        android:layout_alignBottom="@+id/ParticipantsList"
-        android:layout_toEndOf="@+id/textViewAddParticipantMessage"
-        android:layout_marginStart="10dp" />
-
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -81,25 +73,6 @@
         android:layout_below="@+id/textViewParticipants"
         android:layout_toEndOf="@+id/ParticipantsList" />
 
-    <Button
-        android:text="tap and hold to record"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/recordButton"
-        android:layout_above="@+id/buttonPlay"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="11dp"
-        android:layout_alignStart="@+id/ButtonAddParticipantToRoom" />
-
-    <Button
-        android:text="play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonPlay"
-        android:layout_alignBaseline="@+id/textViewRecord"
-        android:layout_alignBottom="@+id/textViewRecord"
-        android:layout_alignStart="@+id/textViewAddParticipantMessage"/>
-
     <TextView
         android:text="Select voice type..."
         android:layout_width="wrap_content"
@@ -107,5 +80,22 @@
         android:id="@+id/textViewSpinnerVoiceType"
         android:layout_alignTop="@+id/spinnerVoiceType"
         android:layout_alignEnd="@+id/textViewParticipants" />
+
+    <Button
+        android:text="tap and hold to record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/recordButton"
+        android:layout_below="@+id/textViewAddParticipantMessage"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/editTextNewParticipant" />
+
+    <Button
+        android:text="play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonPlay"
+        android:layout_alignBottom="@+id/ParticipantsList"
+        android:layout_alignStart="@+id/textViewAddParticipantMessage" />
 
 </RelativeLayout>

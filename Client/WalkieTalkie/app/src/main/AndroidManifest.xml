@@ -17,6 +17,7 @@
         <activity android:name=".SignIn">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -24,7 +25,8 @@
         <activity android:name=".AddContactActivity" />
         <activity android:name=".RoomsActivity" />
         <activity android:name=".CreateRoomActivity" />
-        <activity android:name=".RoomChatActivity"></activity>
+        <activity android:name=".RoomChatActivity" />
+        <activity android:name=".ClientChatActivity"></activity>
     </application>
 
 </manifest>
