@@ -23,4 +23,10 @@
         METALIC,
         CRAZY_BABY
     }
+
+    public enum ChatType : byte
+    {
+        ROOM = (byte)'r',
+        PRIVATE = (byte)'p'
+    }
 }

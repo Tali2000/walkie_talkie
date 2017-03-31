@@ -13,8 +13,12 @@
         GET_ROOMS,
         GET_PARTICIPANTS,
         VOICE_MESSAGE,
-        SEND_VOICE_MESSAGE,  //sends to the participants of the room
-        SEND_DISTORTIONS
+        SEND_VOICE_MESSAGE_IN_ROOM,
+        SEND_DISTORTIONS,
+        EXIT_ROOM,
+        REMOVE_CONTACT,
+        CURRENT_CONTACT,
+        SEND_VOICE_MESSAGE_TO_CONTACT
     }
 
     public enum ResponseType : byte
@@ -34,6 +38,7 @@
         ALREADY_ENTERED,
         NOT_PARTICIPANT_OF_ROOM,
         INVALID_TIME,
-        FULL_ROOM
+        FULL_ROOM,
+        CANNOT_DETERMINE_CHAT_TYPE
     }
 }

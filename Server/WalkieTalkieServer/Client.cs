@@ -11,11 +11,15 @@ namespace WalkieTalkieServer
         public long Id;
         public long CurrRoomId;
         public bool IsAdmin;    //in current room
+        public long CurrContactId;
 
         public Client(Session session)
         {
             m_session = session;
             IsConnected = false;
+            CurrRoomId = 0;
+            IsAdmin = false;
+            CurrContactId = 0;
         }
 
         public Session GetSession()

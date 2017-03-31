@@ -12,6 +12,9 @@
         GET_CONTACTS,
         GET_ROOMS,
         GET_PARTICIPANTS,
-        SEND_VOICE_MESSAGE
+        SEND_VOICE_MESSAGE,
+        EXIT_ROOM = 13,
+        REMOVE_CONTACT,
+        CURRENT_CONTACT
     }
 }

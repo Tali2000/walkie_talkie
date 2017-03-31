@@ -47,6 +47,8 @@ namespace WalkieTalkieServer
             s.Send(SendDistortion());
         }
 
+        // Used only in SignIn function
+        // Sends all the distortion types
         private static OutPacket SendDistortion()
         {
             OutPacket outP = new OutPacket(ServerOperation.SEND_DISTORTIONS);
@@ -153,7 +155,10 @@ namespace WalkieTalkieServer
                 {
                     using (Query query = client.ExecuteQuery($"SELECT id FROM rooms ORDER BY id DESC LIMIT 1;"))
                         if (query.NextRow())
+                        {
                             client.CurrRoomId = query.Get<long>("id");
+                            client.CurrContactId = 0;
+                        }
                     client.IsAdmin = true;
 
                     client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID,isEntered) values({client.CurrRoomId},{client.Id},{true});");
@@ -259,6 +264,7 @@ namespace WalkieTalkieServer
                 if (query.NextRow())
                 {
                     client.CurrRoomId = query.Get<long>("id");
+                    client.CurrContactId = 0;
                     outP.WriteByte((byte)ResponseType.SUCCESS);
                     outP.WriteString(roomname);
                     outP.WriteBool(client.Id == query.Get<long>("adminID"));
@@ -309,6 +315,7 @@ namespace WalkieTalkieServer
 
         public static void VoiceMessage(Session s, InPacket p)
         {
+            byte chat = p.ReadByte();
             byte distortion = p.ReadByte();
             byte[] message = p.ReadBuffer(p.ReadInt());
             Client client = Program.Server.GetClient(s.Id);
@@ -329,12 +336,20 @@ namespace WalkieTalkieServer
                 s.Send(outP);
                 return;
             }
-            List<long> participants = GetParticipants(client);
-
-            if (SendVoiceMessage(participants, filePath, client, distortion))
-                outP.WriteByte((byte)ResponseType.SUCCESS);
+            // Checks whether the chat is a room OR a private one
+            if (chat == (byte)ChatType.ROOM)
+                if (SendVoiceMessage(GetParticipants(client), filePath, client, distortion))
+                    outP.WriteByte((byte)ResponseType.SUCCESS);
+                else
+                    outP.WriteByte((byte)ResponseType.FAIL);
+            else if (chat == (byte)ChatType.PRIVATE)
+                if (SendVoiceMessage(filePath, client, distortion))
+                    outP.WriteByte((byte)ResponseType.SUCCESS);
+                else
+                    outP.WriteByte((byte)ResponseType.FAIL);
             else
-                outP.WriteByte((byte)ResponseType.FAIL);
+                outP.WriteByte((byte)ResponseType.CANNOT_DETERMINE_CHAT_TYPE);
+
             s.Send(outP);
             File.Delete(filePath);
         }
@@ -342,7 +357,7 @@ namespace WalkieTalkieServer
         // Sends the voice message to all room's participants
         private static bool SendVoiceMessage(List<long> participants, string path, Client client, byte distortion)
         {
-            OutPacket outP = new OutPacket(ServerOperation.SEND_VOICE_MESSAGE);
+            OutPacket outP = new OutPacket(ServerOperation.SEND_VOICE_MESSAGE_IN_ROOM);
             using (Query query = client.ExecuteQuery($"SELECT roomname FROM rooms WHERE id={client.CurrRoomId};"))
             {
                 query.NextRow();
@@ -371,6 +386,132 @@ namespace WalkieTalkieServer
                     if (!Program.Server.GetClientByDBid(id).GetSession().Send(outP))
                         return false;
             return true;
+        }
+
+        // Sends the voice message privately to the contact
+        private static bool SendVoiceMessage(string path, Client client, byte distortion)
+        {
+            OutPacket outP = new OutPacket(ServerOperation.SEND_VOICE_MESSAGE_TO_CONTACT);
+
+            using (Query query = client.ExecuteQuery($"SELECT username FROM users WHERE id={client.CurrContactId};"))
+            {
+                query.NextRow();
+                outP.WriteString(query.Get<string>("username"));
+            }
+
+            using (Query query = client.ExecuteQuery($"SELECT username FROM users WHERE id={client.Id};"))
+            {
+                query.NextRow();
+                outP.WriteString(query.Get<string>("username"));
+            }
+
+            path = VoiceHandling.Distort(path, (DistortionType)distortion);
+
+            byte[] message = File.ReadAllBytes(path);
+            outP.WriteBuffer(message);
+            return Program.Server.GetClientByDBid(client.CurrContactId).GetSession().Send(outP);
+        }
+
+        public static void ExitRoom(Session s, InPacket p)
+        {
+            string roomname = p.ReadString();
+            Client client = Program.Server.GetClient(s.Id);
+            OutPacket outP = new OutPacket(ServerOperation.EXIT_ROOM);
+
+            long roomId;
+            // Checks whether such room exists
+            using (Query query = client.ExecuteQuery($"SELECT id FROM rooms WHERE roomname='{roomname}';"))
+            {
+                if (!query.NextRow())
+                {
+                    outP.WriteByte((byte)ResponseType.DOESNT_EXIST);
+                    s.Send(outP);
+                    return;
+                }
+                roomId = query.Get<long>("id");
+            }
+            // Checks whether the client is a participant of the room
+            using (Query query = client.ExecuteQuery($"SELECT * FROM participants WHERE roomID={roomId} AND participantID={client.Id};"))
+                if(!query.NextRow())
+                {
+                    outP.WriteByte((byte)ResponseType.NOT_PARTICIPANT_OF_ROOM);
+                    s.Send(outP);
+                    return;
+                }
+
+            client.ExecuteNonQuery($"DELETE FROM participants WHERE roomID={roomId} AND participantID={client.Id};");
+            if (DeletedValues<long>(client, new string[] { "roomID", "participantID" }, "participants", new long[] { roomId, client.Id }))
+                outP.WriteByte((byte)ResponseType.SUCCESS);
+            else
+                outP.WriteByte((byte)ResponseType.FAIL);
+            s.Send(outP);
+        }
+
+        public static void RemoveContact(Session s, InPacket p)
+        {
+            string contact = p.ReadString();
+            Client client = Program.Server.GetClient(s.Id);
+            OutPacket outP = new OutPacket(ServerOperation.REMOVE_CONTACT);
+
+            long contactId;
+            // Checks whether the contact exists as a user
+            using (Query query = client.ExecuteQuery($"SELECT id FROM users WHERE username='{contact}';"))
+            {
+                if (!query.NextRow())
+                {
+                    outP.WriteByte((byte)ResponseType.DOESNT_EXIST);
+                    s.Send(outP);
+                    return;
+                }
+                contactId = query.Get<long>("id");
+            }
+            // Checks whether the user is in your contacts
+            using (Query query = client.ExecuteQuery($"SELECT * FROM contacts WHERE userID={client.Id} AND contactID={contactId};"))
+                if(query.NextRow())
+                {
+                    outP.WriteByte((byte)ResponseType.NOT_IN_CONTACTS);
+                    s.Send(outP);
+                    return;
+                }
+
+            client.ExecuteNonQuery($"DELETE FROM contacts WHERE userID={client.Id} AND contactID={contactId};");
+            if (DeletedValues<long>(client, new string[] { "userID", "contactID" }, "contacts", new long[] { client.Id, contactId }))
+                outP.WriteByte((byte)ResponseType.SUCCESS);
+            else
+                outP.WriteByte((byte)ResponseType.FAIL);
+            s.Send(outP);
+        }
+
+        public static void SetCurrentContact(Session s, InPacket p)
+        {
+            string contact = p.ReadString();
+            Client client = Program.Server.GetClient(s.Id);
+            OutPacket outP = new OutPacket(ServerOperation.CURRENT_CONTACT);
+
+            long contactId;
+            // Checks whether the contact exists as a user
+            using (Query query = client.ExecuteQuery($"SELECT id FROM users WHERE username='{contact}';"))
+                if (!query.NextRow())
+                {
+                    outP.WriteByte((byte)ResponseType.DOESNT_EXIST);
+                    s.Send(outP);
+                    return;
+                }
+                else
+                    contactId = query.Get<long>("id");
+            // Checks whether the user is in your contacts
+            using (Query query = client.ExecuteQuery($"SELECT * FROM contacts WHERE userID={client.Id} AND contactID={contactId};"))
+                if (query.NextRow())
+                {
+                    client.CurrContactId = contactId;
+                    client.CurrRoomId = 0;
+                    client.IsAdmin = false;
+                    outP.WriteByte((byte)ResponseType.SUCCESS);
+                    outP.WriteString(contact);
+                }
+                else
+                    outP.WriteByte((byte)ResponseType.NOT_IN_CONTACTS);
+            s.Send(outP);
         }
 
         #region Helpers
@@ -426,6 +567,25 @@ namespace WalkieTalkieServer
             }
             using (Query query = client.ExecuteQuery(cmd))
                 return query.NextRow();
+        }
+
+        private static bool DeletedValues<T>(Client client, string[] columns, string table, T[] toDelete)
+        {
+            if (columns.Length != toDelete.Length)
+                return false;
+
+            string cmd = $"SELECT * FROM {table} WHERE ";
+            for (int i = 0; i < columns.Length; i++)
+            {
+                if (toDelete[i] is string)
+                    cmd += columns[i] + "='" + toDelete[i] + "'";
+                else
+                    cmd += columns[i] + "=" + toDelete[i];
+                if (i != columns.Length - 1)
+                    cmd += " AND ";
+            }
+            using (Query query = client.ExecuteQuery(cmd))
+                return !query.NextRow();
         }
 
         #endregion
