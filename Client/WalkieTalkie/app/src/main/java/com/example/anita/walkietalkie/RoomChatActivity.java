@@ -118,7 +118,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                     stopRecording();
                     recordButton.setText("tap and hold to record");
                     try{
-                        Session.getInstance(activity, handler).SendRecord(mFileName, voiceType);
+                        Session.getInstance(activity, handler).SendRecord(mFileName, voiceType, RecordsType.ROOM);
                     }catch (IOException e){
                         e.printStackTrace();
                     }

@@ -47,10 +47,10 @@ public class ClientChatActivity extends AppCompatActivity implements View.OnClic
         final Activity activity = this;
         final Handler handler = new Handler();
 
-        //get roomname and isAdmin
+        //get username
         Bundle extras = getIntent().getExtras();
         username = extras.getString("USERNAME");
-        textViewUsername = (TextView)findViewById(R.id.textViewRoomname);
+        textViewUsername = (TextView)findViewById(R.id.textViewContactName);
         textViewUsername.setText(username);
 
         //spinner initialize
@@ -91,7 +91,7 @@ public class ClientChatActivity extends AppCompatActivity implements View.OnClic
                     stopRecording();
                     recordButton.setText("tap and hold to record");
                     try{
-                        Session.getInstance(activity, handler).SendRecord(mFileName, voiceType);
+                        Session.getInstance(activity, handler).SendRecord(mFileName, voiceType, RecordsType.CLIENT);
                     }catch (IOException e){
                         e.printStackTrace();
                     }

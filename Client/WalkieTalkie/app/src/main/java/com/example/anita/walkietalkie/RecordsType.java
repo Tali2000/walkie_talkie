@@ -1,8 +1,8 @@
 package com.example.anita.walkietalkie;
 
 public enum RecordsType {
-    ROOM((byte)0),
-    CLIENT((byte)1);
+    ROOM((byte)'r'),
+    CLIENT((byte)'p'); //participant
 
     private byte value;
 

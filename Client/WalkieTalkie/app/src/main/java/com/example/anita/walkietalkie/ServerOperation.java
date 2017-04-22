@@ -343,7 +343,7 @@ public enum ServerOperation {
             String fileName = String.valueOf(System.currentTimeMillis()) + senderName + ".wav";
             String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName() + "/Rooms/" + roomName + "/" + fileName;
             //create a directory of the records on the device
-            File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName(),
+            File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName()+ "/Rooms/",
                     roomName);
             if (!mydir.exists())
                 if (!mydir.mkdirs())
@@ -441,7 +441,7 @@ public enum ServerOperation {
             String fileName = String.valueOf(System.currentTimeMillis()) + senderName + ".wav";
             String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName() + "/Clients/" + username + "/" + fileName;
             //create a directory of the records on the device
-            File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName(),
+            File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName()+ "/Clients/",
                     username);
             if (!mydir.exists())
                 if (!mydir.mkdirs())
@@ -450,7 +450,7 @@ public enum ServerOperation {
             fos.write(record);
             fos.close();
 
-            PlayRecordsHelper.getInstance().SetNewRecord(username, filePath, RecordsType.CLIENT);
+            PlayRecordsHelper.getInstance().SetNewRecord(senderName, filePath, RecordsType.CLIENT);
         }
     },
     DEFAULT(-1) {

@@ -150,8 +150,9 @@ public class Session {
         }
     }
 
-    public void SendRecord(String filePath, byte voiceType) throws IOException{
+    public void SendRecord(String filePath, byte voiceType, RecordsType chatType) throws IOException{
         try(OutPacket packet = new OutPacket(ClientOperation.SENDRECORD)){
+            packet.writeByte(chatType.getValue());
             packet.writeByte(voiceType);
             packet.writeFile(filePath);
             Send(packet);

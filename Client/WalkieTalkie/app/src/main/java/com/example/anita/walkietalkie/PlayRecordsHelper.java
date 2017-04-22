@@ -57,6 +57,7 @@ public class PlayRecordsHelper {
             }
             temp.add(filePath);
             clientRecords.put(name, temp);
+            System.out.println(0);
         }
     }
 }
