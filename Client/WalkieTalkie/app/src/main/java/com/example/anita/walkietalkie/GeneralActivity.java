@@ -1,6 +1,7 @@
 package com.example.anita.walkietalkie;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +28,12 @@ public class GeneralActivity extends AppCompatActivity implements View.OnClickLi
             switch (v.getId()) {
                 case R.id.buttonInfo:
                     Session.getInstance(activity, handler).GetAboutInfo();
+                    break;
+                case R.id.buttonContacts:
+                    startActivity(new Intent(this, ContactsActivity.class));
+                    break;
+                case R.id.buttonRooms:
+                    startActivity(new Intent(this, RoomsActivity.class));
                     break;
             }
         } catch (Exception e) {

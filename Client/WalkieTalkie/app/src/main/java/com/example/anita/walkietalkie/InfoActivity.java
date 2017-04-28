@@ -13,7 +13,7 @@ public class InfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
-        infoTextView = (TextView) findViewById(R.id.textViewInfo);
+        infoTextView = (TextView) findViewById(R.id.textViewAboutUs);
         //get info
         Bundle extras = getIntent().getExtras();
         info = extras.getString("INFO");

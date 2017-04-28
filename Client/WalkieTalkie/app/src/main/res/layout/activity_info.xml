@@ -8,6 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorBackground"
     tools:context="com.example.anita.walkietalkie.InfoActivity">
 
     <TextView
@@ -16,12 +17,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/textViewInfo" />
+        android:id="@+id/textViewAboutUs" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewInfo"
+        android:layout_below="@+id/textViewAboutUs"
         android:layout_alignParentStart="true"
         android:layout_marginTop="13dp"
         android:id="@+id/textViewInfo" />

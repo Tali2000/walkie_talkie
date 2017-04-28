@@ -48,7 +48,7 @@ public class RoomsActivity extends Activity implements View.OnClickListener {
                     startActivity(new Intent(this, CreateRoomActivity.class));
                     break;
                 case R.id.generalButton:
-                    //TODO - generalActivity
+                    startActivity(new Intent(this, GeneralActivity.class));
                     break;
                 case R.id.contactsButton:
                     startActivity(new Intent(this, ContactsActivity.class));

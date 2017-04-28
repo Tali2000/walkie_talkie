@@ -59,6 +59,8 @@ public enum ServerOperation {
                         case 0: //success
                             messageView.setText
                                     ("Successfully registered!");
+                            Intent intent = new Intent(activity, ContactsActivity.class);
+                            activity.startActivity(intent);
                             break;
                         case 4: //Invalid username
                             messageView.setText
