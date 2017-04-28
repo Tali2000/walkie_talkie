@@ -158,4 +158,10 @@ public class Session {
             Send(packet);
         }
     }
+
+    public void GetAboutInfo() throws IOException{
+        try(OutPacket packet = new OutPacket(ClientOperation.GET_ABOUT_INFO)){
+            Send(packet);
+        }
+    }
 }

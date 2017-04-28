@@ -98,4 +98,12 @@
         android:layout_alignBottom="@+id/ParticipantsList"
         android:layout_alignStart="@+id/textViewAddParticipantMessage" />
 
+    <Button
+        android:text="leave room"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/buttonLeaveRoom" />
+
 </RelativeLayout>

@@ -453,6 +453,20 @@ public enum ServerOperation {
             PlayRecordsHelper.getInstance().SetNewRecord(senderName, filePath, RecordsType.CLIENT);
         }
     },
+    GET_ABOUT_INFO(17){
+        @Override
+        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
+            final String info = packet.readString();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(activity, InfoActivity.class);
+                    intent.putExtra("INFO", info);
+                    activity.startActivity(intent);
+                }
+            });
+        }
+    },
     DEFAULT(-1) {
         @Override
         public void handle(InPacket packet, final Activity activity, final Handler handler){}

@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class ContactsActivity extends Activity implements OnClickListener {
 
-    Button addContactButton, roomsButton, generalButton;
+    Button addContactButton, roomsButton, generalButton; //TODO
     ListView contactList;
 
     @Override
@@ -51,7 +51,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
                     startActivity(new Intent(this, AddContactActivity.class));
                     break;
                 case R.id.generalButton:
-
+                    //TODO
                     break;
                 case R.id.roomsButton:
                     startActivity(new Intent(this, RoomsActivity.class));

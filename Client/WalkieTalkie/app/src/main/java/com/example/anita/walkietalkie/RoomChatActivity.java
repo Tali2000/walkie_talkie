@@ -32,7 +32,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     private String roomname;
     private TextView textViewRoomname;
     private Boolean isAdmin = false;
-    private Button addParticipant, recordButton, playButton;
+    private Button addParticipant, recordButton, playButton, leaveButton; //TODO
     private ListView participantsList;
     private EditText newPartiName;
     private ArrayList<String> recordsToPlay; //array of paths with records to play
