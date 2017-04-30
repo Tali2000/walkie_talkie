@@ -18,7 +18,8 @@
         EXIT_ROOM,
         REMOVE_CONTACT,
         CURRENT_CONTACT,
-        SEND_VOICE_MESSAGE_TO_CONTACT
+        SEND_VOICE_MESSAGE_TO_CONTACT,
+        INFO
     }
 
     public enum ResponseType : byte

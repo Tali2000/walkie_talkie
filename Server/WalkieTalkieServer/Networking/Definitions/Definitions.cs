@@ -12,6 +12,8 @@
         public const ushort min_RecordTime = 10;
         public const ushort max_RecordTime = 60;
         public const uint max_NumParticipants = 10;     //in each room
+
+        public const string info = "Nice and cool WalkieTalkie app! :)";
     }
 
     public enum DistortionType : byte

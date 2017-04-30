@@ -92,6 +92,7 @@ namespace WalkieTalkieServer
             handlers.Add(ClientOperation.EXIT_ROOM, OperationHandlers.ExitRoom);
             handlers.Add(ClientOperation.REMOVE_CONTACT, OperationHandlers.RemoveContact);
             handlers.Add(ClientOperation.CURRENT_CONTACT, OperationHandlers.SetCurrentContact);
+            handlers.Add(ClientOperation.INFO, OperationHandlers.SendInfo);
         }
     }
 }

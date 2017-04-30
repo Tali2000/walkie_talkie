@@ -514,6 +514,14 @@ namespace WalkieTalkieServer
             s.Send(outP);
         }
 
+        public static void SendInfo(Session s, InPacket p)
+        {
+            Client client = Program.Server.GetClient(s.Id);
+            OutPacket outP = new OutPacket(ServerOperation.INFO);
+            outP.WriteString(Definitions.info);
+            s.Send(outP);
+        }
+
         #region Helpers
 
         private static void SetClientId(Client client, string username)

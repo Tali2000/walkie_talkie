@@ -15,6 +15,7 @@
         SEND_VOICE_MESSAGE,
         EXIT_ROOM = 13,
         REMOVE_CONTACT,
-        CURRENT_CONTACT
+        CURRENT_CONTACT,
+        INFO = 17
     }
 }
