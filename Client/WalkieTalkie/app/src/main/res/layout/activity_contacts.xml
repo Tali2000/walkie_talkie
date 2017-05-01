@@ -61,4 +61,12 @@
         android:layout_alignEnd="@+id/messageView"
         android:layout_alignParentStart="true" />
 
+    <Button
+        android:text="refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/messageView"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/buttonRefresh" />
+
 </RelativeLayout>

@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class RoomsActivity extends Activity implements View.OnClickListener {
-    Button createRoomButton, generalButton, contactsButton;
+    Button createRoomButton, generalButton, contactsButton, refreshButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +26,9 @@ public class RoomsActivity extends Activity implements View.OnClickListener {
 
         contactsButton = (Button) findViewById(R.id.contactsButton);
         contactsButton.setOnClickListener(this);
+
+        refreshButton = (Button) findViewById(R.id.buttonRefresh) ;
+        refreshButton.setOnClickListener(this);
 
         final Activity activity = this;
         final Handler handler = new Handler();
@@ -52,6 +55,9 @@ public class RoomsActivity extends Activity implements View.OnClickListener {
                     break;
                 case R.id.contactsButton:
                     startActivity(new Intent(this, ContactsActivity.class));
+                    break;
+                case R.id.buttonRefresh:
+                    Session.getInstance(activity, handler).GetRooms();
                     break;
             }
         } catch (Exception e) {

@@ -78,10 +78,7 @@ namespace WalkieTalkieServer
                 if (Validator.IsValidPassword(password))
                 {
                     client.ExecuteNonQuery($"INSERT INTO users(username,pass) values('{username}','{password}');");
-                    if (InsertedValues<string>(client, new string[] { "username", "pass" }, "users", new string[] { username, password }))
-                        outP.WriteByte((byte)ResponseType.SUCCESS);
-                    else
-                        outP.WriteByte((byte)ResponseType.FAIL);
+                    outP.WriteByte((byte)ResponseType.SUCCESS);
                 }
                 else
                     outP.WriteByte((byte)ResponseType.INVALID_PASSWORD);
@@ -117,10 +114,7 @@ namespace WalkieTalkieServer
             else
             {
                 client.ExecuteNonQuery($"INSERT INTO contacts(userID,contactID) values({client.Id},{contactId});");
-                if (InsertedValues<long>(client, new string[] { "userID", "contactID" }, "contacts", new long[] { client.Id, contactId }))
-                    outP.WriteByte((byte)ResponseType.SUCCESS);
-                else
-                    outP.WriteByte((byte)ResponseType.FAIL);
+                outP.WriteByte((byte)ResponseType.SUCCESS);
             }
             s.Send(outP);
         }
@@ -151,24 +145,16 @@ namespace WalkieTalkieServer
             if (Validator.IsValidRoomname(roomname))
             {
                 client.ExecuteNonQuery($"INSERT INTO rooms(roomname,adminID,isAnonymous) values('{roomname}',{client.Id},{isAnonymous});");
-                if (InsertedValues<string>(client, new string[] { "roomname", "adminID", "isAnonymous" }, "rooms", new string[] { roomname, client.Id.ToString(), isAnonymous.ToString() }))
-                {
-                    using (Query query = client.ExecuteQuery($"SELECT id FROM rooms ORDER BY id DESC LIMIT 1;"))
-                        if (query.NextRow())
-                        {
-                            client.CurrRoomId = query.Get<long>("id");
-                            client.CurrContactId = 0;
-                        }
-                    client.IsAdmin = true;
+                using (Query query = client.ExecuteQuery($"SELECT id FROM rooms ORDER BY id DESC LIMIT 1;"))
+                    if (query.NextRow())
+                    {
+                        client.CurrRoomId = query.Get<long>("id");
+                        client.CurrContactId = 0;
+                    }
+                client.IsAdmin = true;
 
-                    client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID,isEntered) values({client.CurrRoomId},{client.Id},{true});");
-                    if (InsertedValues<long>(client, new string[] { "roomID", "participantID", "isEntered" }, "participants", new long[] { client.CurrRoomId, client.Id, Convert.ToInt64(true) }))
-                        outP.WriteByte((byte)ResponseType.SUCCESS);
-                    else
-                        outP.WriteByte((byte)ResponseType.FAIL);
-                }
-                else
-                    outP.WriteByte((byte)ResponseType.FAIL);
+                client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID,isEntered) values({client.CurrRoomId},{client.Id},{true});");
+                outP.WriteByte((byte)ResponseType.SUCCESS);
             }
             else
                 outP.WriteByte((byte)ResponseType.INVALID_NAME);
@@ -218,43 +204,10 @@ namespace WalkieTalkieServer
             }
             // Adds the contact to the room
             client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{contactId});");
-            if (InsertedValues<long>(client, new string[] { "roomID", "participantID" }, "participants", new long[] { client.CurrRoomId, contactId }))
-                outP.WriteByte((byte)ResponseType.SUCCESS);
-            else
-                outP.WriteByte((byte)ResponseType.FAIL);
+            outP.WriteByte((byte)ResponseType.SUCCESS);
             s.Send(outP);
         }
-
-        public static void AllowEnterance(Session s, InPacket p)
-        {
-            bool index = p.ReadBool();
-            Client client = Program.Server.GetClient(s.Id);
-            OutPacket outP = new OutPacket(ServerOperation.ALLOW_ENTRANCE);
-            using (Query query = client.ExecuteQuery($"SELECT isEntered FROM participants WHERE roomID={client.CurrRoomId} AND participantID={client.Id};"))
-                if (!query.NextRow())
-                {
-                    outP.WriteByte((byte)ResponseType.NOT_PARTICIPANT_OF_ROOM);
-                    s.Send(outP);
-                    return;
-                }
-                else if (query.Get<bool>("isEntered"))
-                {
-                    outP.WriteByte((byte)ResponseType.ALREADY_ENTERED);
-                    s.Send(outP);
-                    return;
-                }
-            client.ExecuteNonQuery($"UPDATE participants SET isEntered={index} WHERE roomID={client.CurrRoomId} AND participantID={client.Id};");
-            using (Query query = client.ExecuteQuery($"SELECT isEntered FROM participants WHERE roomID={client.CurrRoomId} AND participantID={client.Id};"))
-            {
-                query.NextRow();
-                if (query.Get<bool>("isEntered") == index)
-                    outP.WriteByte((byte)ResponseType.SUCCESS);
-                else
-                    outP.WriteByte((byte)ResponseType.FAIL);
-            }
-            s.Send(outP);
-        }
-
+      
         public static void SetCurrentRoom(Session s, InPacket p)
         {
             string roomname = p.ReadString();
@@ -374,8 +327,7 @@ namespace WalkieTalkieServer
                     if (query2.NextRow())
                         senderUsername = query2.Get<string>("username");
             }
-            if (senderUsername.Length != 0)
-                outP.WriteString(senderUsername);
+            outP.WriteString(senderUsername);
 
             path = VoiceHandling.Distort(path, (DistortionType)distortion);
 
@@ -440,10 +392,7 @@ namespace WalkieTalkieServer
                 }
 
             client.ExecuteNonQuery($"DELETE FROM participants WHERE roomID={roomId} AND participantID={client.Id};");
-            if (DeletedValues<long>(client, new string[] { "roomID", "participantID" }, "participants", new long[] { roomId, client.Id }))
-                outP.WriteByte((byte)ResponseType.SUCCESS);
-            else
-                outP.WriteByte((byte)ResponseType.FAIL);
+            outP.WriteByte((byte)ResponseType.SUCCESS);
             s.Send(outP);
         }
 
@@ -475,10 +424,7 @@ namespace WalkieTalkieServer
                 }
 
             client.ExecuteNonQuery($"DELETE FROM contacts WHERE userID={client.Id} AND contactID={contactId};");
-            if (DeletedValues<long>(client, new string[] { "userID", "contactID" }, "contacts", new long[] { client.Id, contactId }))
-                outP.WriteByte((byte)ResponseType.SUCCESS);
-            else
-                outP.WriteByte((byte)ResponseType.FAIL);
+            outP.WriteByte((byte)ResponseType.SUCCESS);
             s.Send(outP);
         }
 
@@ -556,44 +502,6 @@ namespace WalkieTalkieServer
                 for (int i = 0; query.NextRow(); i++)
                     participants.Add(query.Get<long>("participantID"));
             return participants;
-        }
-
-        private static bool InsertedValues<T>(Client client, string[] columns, string table, T[] expected)
-        {
-            if (columns.Length != expected.Length)
-                return false;
-            
-            string cmd = $"SELECT * FROM {table} WHERE ";
-            for (int i = 0; i < columns.Length; i++)
-            {
-                if (expected[i] is string)
-                    cmd += columns[i] + "='" + expected[i] + "'";
-                else
-                    cmd += columns[i] + "=" + expected[i];
-                if (i != columns.Length - 1)
-                    cmd += " AND ";
-            }
-            using (Query query = client.ExecuteQuery(cmd))
-                return query.NextRow();
-        }
-
-        private static bool DeletedValues<T>(Client client, string[] columns, string table, T[] toDelete)
-        {
-            if (columns.Length != toDelete.Length)
-                return false;
-
-            string cmd = $"SELECT * FROM {table} WHERE ";
-            for (int i = 0; i < columns.Length; i++)
-            {
-                if (toDelete[i] is string)
-                    cmd += columns[i] + "='" + toDelete[i] + "'";
-                else
-                    cmd += columns[i] + "=" + toDelete[i];
-                if (i != columns.Length - 1)
-                    cmd += " AND ";
-            }
-            using (Query query = client.ExecuteQuery(cmd))
-                return !query.NextRow();
         }
 
         #endregion

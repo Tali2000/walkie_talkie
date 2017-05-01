@@ -56,14 +56,14 @@ public class ContactsList {
             }
 
         });
-
+        /*
         contactList.setLongClickable(true);
         popUpWindow = new PopupWindow(activity);
         containerLayout = new LinearLayout(activity);
         mainLayout = new LinearLayout(activity);
 
 
-        /*contactList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+        contactList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 
 public class RoomChatActivity extends AppCompatActivity implements View.OnClickListener{
     private String roomname;
-    private TextView textViewRoomname;
+    private TextView textViewRoomname, textViewWhoIsTalking;
     private Boolean isAdmin = false;
     private Button addParticipant, recordButton, playButton, leaveButton; //TODO
     private ListView participantsList;
@@ -54,6 +55,8 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
 
         final Activity activity = this;
         final Handler handler = new Handler();
+
+        textViewWhoIsTalking = (TextView) findViewById(R.id.textViewWhoIsTalking);
 
         //get roomname and isAdmin
         Bundle extras = getIntent().getExtras();
@@ -136,10 +139,16 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void run() {
                 while (true) {
+                    //check for new records
                     newRecordPath = PlayRecordsHelper.getInstance().CheckForNewRecord(roomname, RecordsType.ROOM);
-                    if(newRecordPath != null){
+                    if(newRecordPath != null){//if there is a new record
                         setNewRecordToPlay(newRecordPath);
                     }
+                    //check if there are unopened records
+                    /*if(recordsToPlay.size() > 0)
+                        playButton.setBackgroundColor(Color.BLUE);
+                    else
+                        playButton.setBackgroundColor(Color.GRAY);*/
                 }
             }
         }).start();
@@ -178,11 +187,16 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                     //
                     //TODO show popup window
                     Session.getInstance(activity, handler).AddParticipant(newPartiName.getText().toString());
+                    newPartiName.setText("");
                     break;
                 case R.id.buttonPlay:
                     if(playButton.getText().toString().equals("play") && recordsToPlay.size() > 0){
-                        playAudio(recordsToPlay.get(0));
+                        String path = recordsToPlay.get(0);
+                        playAudio(path);
                         playButton.setText("pause");
+                        String senderName = getSenderNameFromAFile(path);
+                        if (senderName != "")//TODO - doesnt working
+                            textViewWhoIsTalking.setText(senderName + " is talking...");
                     }
                     else if(playButton.getText().toString().equals("pause")){
                         pauseAudio();
@@ -223,6 +237,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                 deleteRecord();
                 mPlayer.release();
                 playButton.setText("play");
+                textViewWhoIsTalking.setText("");
             }
         });
     }
@@ -239,5 +254,11 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
 
     private void deleteRecord(){
         recordsToPlay.remove(0);
+    }
+
+    private String getSenderNameFromAFile(String path){ //path format: <folder name>/filename.wav
+        String fileName = path.split("/")[path.split("/").length-1];
+        String d = fileName.substring(String.valueOf(System.currentTimeMillis()).length(), fileName.length()-".wav".length());
+        return d;
     }
 }

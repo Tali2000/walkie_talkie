@@ -8,11 +8,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class ContactsActivity extends Activity implements OnClickListener {
 
-    Button addContactButton, roomsButton, generalButton; //TODO
+    Button addContactButton, roomsButton, generalButton, refreshButton; //TODO
     ListView contactList;
 
     @Override
@@ -28,6 +27,9 @@ public class ContactsActivity extends Activity implements OnClickListener {
 
         roomsButton = (Button) findViewById(R.id.roomsButton);
         roomsButton.setOnClickListener(this);
+
+        refreshButton = (Button) findViewById(R.id.buttonRefresh) ;
+        refreshButton.setOnClickListener(this);
 
         contactList = (ListView) findViewById(R.id.contactList);
         final Activity activity = this;
@@ -55,6 +57,9 @@ public class ContactsActivity extends Activity implements OnClickListener {
                     break;
                 case R.id.roomsButton:
                     startActivity(new Intent(this, RoomsActivity.class));
+                    break;
+                case R.id.buttonRefresh:
+                    Session.getInstance(activity, handler).GetContacts();
                     break;
             }
         } catch (Exception e) {

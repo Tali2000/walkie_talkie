@@ -51,6 +51,7 @@ public class CreateRoomActivity extends Activity implements View.OnClickListener
         createRoomButton.setOnClickListener(this);
 
         checkBox = (CheckBox)findViewById(R.id.checkBoxAnonymousMode);
+        checkBox.setOnClickListener(this);
 
         roomName = (EditText)findViewById(R.id.roomName);
     }
@@ -65,6 +66,7 @@ public class CreateRoomActivity extends Activity implements View.OnClickListener
             switch (v.getId()) {
                 case R.id.checkBoxAnonymousMode:
                     checkedAnonymousMode = checkBox.isChecked();
+                    System.out.println();
                     break;
                 case R.id.buttonSendCreateRoom:
                     Session.getInstance(activity, handler).CreateRoom(roomName.getText().toString(), maxSec, checkedAnonymousMode);

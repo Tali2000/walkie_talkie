@@ -85,7 +85,7 @@ public enum ServerOperation {
     },
     ADD_CONTACT (2){
         @Override
-        public void handle(InPacket packet, final Activity activity, Handler handler) throws Exception {
+        public void handle(InPacket packet, final Activity activity, final Handler handler) throws Exception {
             final byte result = packet.readByte();
             //do it every time
             handler.post(new Runnable() {
@@ -184,30 +184,7 @@ public enum ServerOperation {
             });
         }
     },
-    ALLOW_ENTERANCE (5){//TODO
-        @Override
-        public void handle(InPacket packet, final Activity activity, final Handler handler) throws Exception {
-            final byte result = packet.readByte();
-            //do it every time
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    TextView messageView = (TextView) activity.findViewById(R.id.textViewAddParticipantMessage);
-                    switch (result) {
-                        case 0: //success
-                            break;
-                        case 7: //fail
-                            break;
-                        case 12: //already entered
-                            break;
-                        case 13: //not a participant of this room
-                            break;
-                    }
-                }
-            });
-        }
-    },
-    SEND_CURR_ROOM (6){
+    SEND_CURR_ROOM (5){
         @Override
         public void handle(final InPacket packet, final Activity activity, final Handler handler) throws Exception {
             final byte isRoom = packet.readByte();
@@ -233,13 +210,14 @@ public enum ServerOperation {
             });
         }
     },
-    GETCONTACTS(7) {
+    GETCONTACTS(6) {
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             final short contactsNum = packet.readShort();
             final String[] values = new String[contactsNum];
             Short contactLen = 0;
             String username = "";
+            //generate values for the contacts list
             for (byte i = 0; i < contactsNum; i++){
                 try {
                     contactLen = packet.readShort();
@@ -254,12 +232,12 @@ public enum ServerOperation {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                ContactsList contactsList = new ContactsList(activity, values);
+                new ContactsList(activity, values);
                 }
             });
         }
     },
-    GETROOMS(8) {
+    GETROOMS(7) {
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             final short roomsNum = packet.readShort();
@@ -285,7 +263,7 @@ public enum ServerOperation {
             });
         }
     },
-    GETPARTICIPANTS(9) {
+    GETPARTICIPANTS(8) {
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             final short partiNum = packet.readShort();
@@ -311,7 +289,7 @@ public enum ServerOperation {
             });
         }
     },
-    SEND_RECORD(10) {
+    SEND_RECORD(9) {
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             final byte result = packet.readByte();
@@ -333,14 +311,14 @@ public enum ServerOperation {
             });
         }
     },
-    GET_ROOM_RECORD(11) {
+    GET_ROOM_RECORD(10) {
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             String roomName = packet.readString();
             String senderName = packet.readString();
-            if (senderName == "")
-                senderName = "anonymous";
             final byte[] record = packet.readByteBuffer();
+            if(senderName == "")
+                senderName = "ano";
             //write to file
             String fileName = String.valueOf(System.currentTimeMillis()) + senderName + ".wav";
             String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Session.getApplicationName() + "/Rooms/" + roomName + "/" + fileName;
@@ -357,7 +335,7 @@ public enum ServerOperation {
             PlayRecordsHelper.getInstance().SetNewRecord(roomName, filePath, RecordsType.ROOM);
         }
     },
-    GETDISTORTIONS(12){//TODO
+    GETDISTORTIONS(11){//TODO
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             handler.post(new Runnable() {
@@ -368,7 +346,7 @@ public enum ServerOperation {
             });
         }
     },
-    EXIT_ROOM(13){
+    EXIT_ROOM(12){
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             final byte result = packet.readByte();
@@ -389,7 +367,7 @@ public enum ServerOperation {
             });
         }
     },
-    REMOVE_CONTACT(14){
+    REMOVE_CONTACT(13){
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             final byte result = packet.readByte();
@@ -410,7 +388,7 @@ public enum ServerOperation {
             });
         }
     },
-    SEND_CURR_CHAT(15){
+    SEND_CURR_CHAT(14){
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws IOException, Exception {
             final byte isUser = packet.readByte();
@@ -433,7 +411,7 @@ public enum ServerOperation {
             });
         }
     },
-    GET_CLIENT_RECORD(16){
+    GET_CLIENT_RECORD(15){
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             String username = packet.readString();
@@ -455,7 +433,7 @@ public enum ServerOperation {
             PlayRecordsHelper.getInstance().SetNewRecord(senderName, filePath, RecordsType.CLIENT);
         }
     },
-    GET_ABOUT_INFO(17){
+    GET_ABOUT_INFO(16){
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             final String info = packet.readString();

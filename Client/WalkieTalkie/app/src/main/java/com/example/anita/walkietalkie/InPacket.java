@@ -55,11 +55,6 @@ public class InPacket {
         buffer.get(ret);
         return ret;
     }
-/*
-    public byte[] readByteBuffer() throws Exception {
-        int res = readInt();
-        return readByteBuffer(res);
-    }*/
 
     public int readInt() throws Exception {
         int b1 = readByte();

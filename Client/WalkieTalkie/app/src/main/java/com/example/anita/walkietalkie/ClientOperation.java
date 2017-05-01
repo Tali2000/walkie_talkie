@@ -6,16 +6,15 @@ public enum ClientOperation {
     ADDCONTACT((byte)2),
     CREATEROOM((byte)3),
     ADDPARTICIPANT((byte)4),
-    ALLOWNEWROOM((byte)5),
-    SENDCURRROOM((byte)6),
-    GETCONTACTS((byte)7),
-    GETROOMS((byte)8),
-    GETPARTICIPANTS((byte)9),
-    SENDRECORD((byte)10),
-    EXITROOM((byte)13),
-    DELETEPARTICIPANT((byte)14),
-    SENDCURRCHAT((byte)15),
-    GET_ABOUT_INFO((byte)17);
+    SENDCURRROOM((byte)5),
+    GETCONTACTS((byte)6),
+    GETROOMS((byte)7),
+    GETPARTICIPANTS((byte)8),
+    SENDRECORD((byte)9),
+    EXITROOM((byte)12),
+    DELETEPARTICIPANT((byte)13),
+    SENDCURRCHAT((byte)14),
+    GET_ABOUT_INFO((byte)16);
 
     private byte value;
 
