@@ -3,6 +3,7 @@ package com.example.anita.walkietalkie;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 
 public class ClientChatActivity extends AppCompatActivity implements View.OnClickListener{
     private String username;
-    private TextView textViewUsername;
+    private TextView textViewUsername, textViewNewRecord;
     private Button recordButton, playButton;
     private ArrayList<String> recordsToPlay; //array of paths with records to play
 
@@ -104,6 +105,9 @@ public class ClientChatActivity extends AppCompatActivity implements View.OnClic
         playButton = (Button) findViewById(R.id.buttonPlay);
         playButton.setOnClickListener(this);
 
+        textViewNewRecord = (TextView) findViewById(R.id.textViewNewRecord);
+        textViewNewRecord.setTextColor(Color.GREEN);
+
         new Thread(new Runnable() {
             String newRecordPath;
             @Override
@@ -113,9 +117,15 @@ public class ClientChatActivity extends AppCompatActivity implements View.OnClic
                     if(newRecordPath != null){
                         setNewRecordToPlay(newRecordPath);
                     }
+                    //check if there are unopened records
+                    /*if(recordsToPlay.size() > 0) //TODO
+                        textViewNewRecord.setText("Unopened messages!!!");
+                    else
+                        textViewNewRecord.setText("");*/
                 }
             }
         }).start();
+
     }
 
     private void startRecording() {

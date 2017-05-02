@@ -2,11 +2,8 @@ package com.example.anita.walkietalkie;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -31,7 +28,7 @@ import java.util.ArrayList;
 
 public class RoomChatActivity extends AppCompatActivity implements View.OnClickListener{
     private String roomname;
-    private TextView textViewRoomname, textViewWhoIsTalking;
+    private TextView textViewRoomname, textViewWhoIsTalking, textViewNewRecord;
     private Boolean isAdmin = false;
     private Button addParticipant, recordButton, playButton, leaveButton; //TODO
     private ListView participantsList;
@@ -130,6 +127,9 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+        textViewNewRecord = (TextView) findViewById(R.id.textViewNewRecord);
+        textViewNewRecord.setTextColor(Color.GREEN);
+
         recordsToPlay = new ArrayList<String>();
         playButton = (Button) findViewById(R.id.buttonPlay);
         playButton.setOnClickListener(this);
@@ -145,13 +145,14 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                         setNewRecordToPlay(newRecordPath);
                     }
                     //check if there are unopened records
-                    /*if(recordsToPlay.size() > 0)
-                        playButton.setBackgroundColor(Color.BLUE);
+                    /*if(recordsToPlay.size() > 0) //TODO
+                        textViewNewRecord.setText("Unopened messages!!!");
                     else
-                        playButton.setBackgroundColor(Color.GRAY);*/
+                        textViewNewRecord.setText("");*/
                 }
             }
         }).start();
+
     }
 
     private void startRecording() {
@@ -195,7 +196,7 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
                         playAudio(path);
                         playButton.setText("pause");
                         String senderName = getSenderNameFromAFile(path);
-                        if (senderName != "")//TODO - doesnt working
+                        if (senderName != "")//TODO - doesnt working in anonymous mode
                             textViewWhoIsTalking.setText(senderName + " is talking...");
                     }
                     else if(playButton.getText().toString().equals("pause")){
@@ -258,7 +259,6 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
 
     private String getSenderNameFromAFile(String path){ //path format: <folder name>/filename.wav
         String fileName = path.split("/")[path.split("/").length-1];
-        String d = fileName.substring(String.valueOf(System.currentTimeMillis()).length(), fileName.length()-".wav".length());
-        return d;
+        return fileName.substring(String.valueOf(System.currentTimeMillis()).length(), fileName.length()-".wav".length());
     }
 }

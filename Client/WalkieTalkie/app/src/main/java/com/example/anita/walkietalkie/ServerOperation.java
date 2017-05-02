@@ -74,10 +74,6 @@ public enum ServerOperation {
                             messageView.setText
                                     ("invalid password");
                             break;
-                        case 7: //other
-                            messageView.setText
-                                    ("something went wrong");
-                            break;
                     }
                 }
             });
@@ -104,10 +100,6 @@ public enum ServerOperation {
                         case 8: //user is already in your contacts
                             messageView.setText
                                     ("User is already in your contacts");
-                            break;
-                        case 7: //other
-                            messageView.setText
-                                    ("something went wrong");
                             break;
                         case 9: //trying to add yourself
                             messageView.setText
@@ -138,10 +130,6 @@ public enum ServerOperation {
                         case 5: //room already exists
                             messageView.setText("room already exists");
                             break;
-                        case 7: //other
-                            messageView.setText
-                                    ("something went wrong");
-                            break;
                         case 14: //invalid max record time
                             messageView.setText
                                     ("Invalid max record time");
@@ -170,10 +158,6 @@ public enum ServerOperation {
                             break;
                         case 10: //contact is already in the room
                             messageView.setText("contact is already in the room");
-                            break;
-                        case 7: //other
-                            messageView.setText
-                                    ("something went wrong");
                             break;
                         case 11: //user is not in your contacts
                             messageView.setText
@@ -358,8 +342,6 @@ public enum ServerOperation {
                             break;
                         case 1: //room doesn't exist
                             break;
-                        case 7: //fail
-                            break;
                         case 13: //you are a participant if this room
                             break;
                     }
@@ -378,8 +360,6 @@ public enum ServerOperation {
                         case 0: //success
                             break;
                         case 1: //username doesn't exist
-                            break;
-                        case 7: //fail
                             break;
                         case 11: //not in your contacts
                             break;
@@ -450,8 +430,7 @@ public enum ServerOperation {
     DEFAULT(-1) {
         @Override
         public void handle(InPacket packet, final Activity activity, final Handler handler){}
-    }
-    ;
+    };
 
     private byte value;
 
