@@ -1,4 +1,9 @@
-﻿using Common.Networking;
+﻿/*
+The class that contains all the information about a specific client.
+It initiates the broadcast with the data base.
+ */
+
+using Common.Networking;
 using Data;
 
 namespace WalkieTalkieServer

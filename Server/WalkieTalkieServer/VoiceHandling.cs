@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+The class that checks the validity of the voice file that was sent by the client (only .wav).
+It makes the chosen distortion to the voice file.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

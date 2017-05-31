@@ -1,4 +1,8 @@
-﻿using System.Text.RegularExpressions;
+﻿/*
+The class that checks whether the client chose all the parameters according to the rules.
+ */
+
+using System.Text.RegularExpressions;
 using WalkieTalkieServer.Networking.Definitions;
 
 namespace WalkieTalkieServer

@@ -1,4 +1,9 @@
-﻿namespace Common.Networking.Definitions
+﻿/*
+Part of the application protocol:
+Enum of all the possible requests/responses from/to the client.
+ */
+
+namespace Common.Networking.Definitions
 {
     public enum ServerOperation : byte
     {

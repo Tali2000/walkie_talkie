@@ -1,4 +1,8 @@
-﻿using MySql.Data.MySqlClient;
+﻿/*
+The class that actually connects to the data base and receives all the information from there.
+ */
+
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;

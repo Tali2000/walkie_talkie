@@ -1,4 +1,8 @@
-﻿using Common.Networking.Definitions;
+﻿/*
+The class that writes any "to be sent" message to the client according to the protocol.
+ */
+
+using Common.Networking.Definitions;
 using System;
 using System.IO;
 using System.Text;

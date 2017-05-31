@@ -1,4 +1,9 @@
-﻿using Common.Networking;
+﻿/*
+The class that handles all the received messages according to the protocol and responses by the need.
+This class gets all the necessary information from the data base in order to check everything.
+ */
+
+using Common.Networking;
 using Common.Networking.Definitions;
 using Data;
 using MediaToolkit;
@@ -153,7 +158,7 @@ namespace WalkieTalkieServer
                     }
                 client.IsAdmin = true;
 
-                client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID,isEntered) values({client.CurrRoomId},{client.Id},{true});");
+                client.ExecuteNonQuery($"INSERT INTO participants(roomID,participantID) values({client.CurrRoomId},{client.Id});");
                 outP.WriteByte((byte)ResponseType.SUCCESS);
             }
             else

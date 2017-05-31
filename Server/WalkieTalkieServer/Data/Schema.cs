@@ -1,4 +1,8 @@
-﻿using MySql.Data.MySqlClient;
+﻿/*
+The class that prepares everything to the connection with the data base.
+ */
+
+using MySql.Data.MySqlClient;
 using System;
 
 namespace Data

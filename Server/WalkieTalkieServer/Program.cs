@@ -1,4 +1,9 @@
-﻿using System.Threading;
+﻿/*
+The main class that starts the running of the server.
+It creates the main thread.
+ */
+
+using System.Threading;
 
 namespace WalkieTalkieServer
 {

@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*
+The class that represents any received message from the client and reads it according to the protocol.
+ */
+
+using System;
 using System.Text;
 
 namespace Common.Networking

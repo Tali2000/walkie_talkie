@@ -1,4 +1,10 @@
-﻿using Common.Networking;
+﻿/*
+The class that begins listening to the clients.
+It opens a session with any client and has a list of all the connected clients at a moment.
+It also gets all the messages that the clients send and handles them.
+ */
+
+using Common.Networking;
 using Common.Networking.Definitions;
 using System;
 using System.Collections.Generic;

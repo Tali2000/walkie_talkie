@@ -1,4 +1,8 @@
-﻿using MySql.Data.MySqlClient;
+﻿/*
+The class that creates a query using MySql in order to get information from the data base.
+ */
+
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 

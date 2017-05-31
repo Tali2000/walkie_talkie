@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*
+The class that creates a socket with any client and manages the communication.
+ */
+
+using System;
 using System.Net;
 using System.Net.Sockets;
 

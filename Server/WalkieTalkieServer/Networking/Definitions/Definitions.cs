@@ -1,8 +1,14 @@
-﻿namespace WalkieTalkieServer.Networking.Definitions
+﻿/*
+Some const variables to make the other part of the code more organized.
+An enum of the possible voice distortions that the client can choose for each record.
+An enum of the type of the chat (private or room).
+ */
+
+namespace WalkieTalkieServer.Networking.Definitions
 {
     public static class Definitions
     {
-        public const string pattern = @"^.*\W";     //any non-word or non-number character
+        public const string pattern = @"^.*\W";     //a regex for any non-word or non-number character
         public const ushort min_UsernameLen = 4;
         public const ushort max_UsernameLen = 10;
         public const ushort min_PasswordLen = 8;
