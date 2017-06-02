@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,14 +27,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * A class of a chat in a room.
+ */
+
 public class RoomChatActivity extends AppCompatActivity implements View.OnClickListener{
     private String roomname;
     private TextView textViewRoomname, textViewWhoIsTalking, textViewNewRecord;
     private Boolean isAdmin = false;
-    private Button addParticipant, recordButton, playButton, leaveButton; //TODO
-    private ListView participantsList;
+    private Button addParticipant, recordButton, playButton;
     private EditText newPartiName;
     private ArrayList<String> recordsToPlay; //array of paths with records to play
+    private ImageView recordView, playView;
 
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
@@ -88,7 +93,6 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         }
 
         //initialize paricipants list
-        participantsList = (ListView)findViewById(R.id.ParticipantsList);
         try {
             Session.getInstance(activity, handler).GetParticipants();
         } catch (IOException e) {
@@ -106,22 +110,27 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         mFileName += "/walkieTalkie_record.3gp";
 
         //initialize record button
+        recordView = (ImageView) findViewById(R.id.imageViewRecord);
         recordButton = (Button)findViewById(R.id.recordButton);
-        recordButton.setOnTouchListener(new View.OnTouchListener(){
+        recordView.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN){
                     startRecording();
+                    recordView.setImageResource(R.drawable.recorder2);
                     recordButton.setText("recording...");
+                    return true;
                 }
                 else if(event.getAction() == MotionEvent.ACTION_UP){
                     stopRecording();
+                    recordView.setImageResource(R.drawable.recorder1);
                     recordButton.setText("tap and hold to record");
                     try{
                         Session.getInstance(activity, handler).SendRecord(mFileName, voiceType, RecordsType.ROOM);
                     }catch (IOException e){
                         e.printStackTrace();
                     }
+                    return true;
                 }
                 return false;
             }
@@ -132,7 +141,8 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
 
         recordsToPlay = new ArrayList<String>();
         playButton = (Button) findViewById(R.id.buttonPlay);
-        playButton.setOnClickListener(this);
+        //playView = (ImageView) findViewById(R.id.imageViewPlay);
+        //playView.setOnClickListener(this);
 
         new Thread(new Runnable() {
             String newRecordPath;
@@ -155,6 +165,9 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
+    /**
+     * Initializes the media recorder and starts record
+     */
     private void startRecording() {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -171,6 +184,9 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         mRecorder.start();
     }
 
+    /**
+     * Stops recording.
+     */
     private void stopRecording() {
         mRecorder.stop();
         mRecorder.release();
@@ -185,8 +201,6 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         try {
             switch (v.getId()) {
                 case R.id.ButtonAddParticipantToRoom:
-                    //
-                    //TODO show popup window
                     Session.getInstance(activity, handler).AddParticipant(newPartiName.getText().toString());
                     newPartiName.setText("");
                     break;
@@ -225,6 +239,11 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         if (!permissionToRecordAccepted) finish();
     }
 
+    /**
+     *
+     * @param filePath plays an audio that locates on this path.
+     * @throws Exception if media player doesn't work.
+     */
     public void playAudio(String filePath) throws Exception{
         mPlayer = new MediaPlayer();
         mPlayer.setDataSource(filePath);
@@ -243,20 +262,35 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         });
     }
 
+    /**
+     * Pauses audio.
+     * @throws Exception - if media player doesn't work.
+     */
     public void pauseAudio() throws Exception{
         mPlayer.pause();
         recordPosition = mPlayer.getCurrentPosition();
     }
 
+    /**
+     * Add a new record's path to paths array.
+     * @param file path to add.
+     */
     public void setNewRecordToPlay(String file){
-        //TODO - sound notification
         recordsToPlay.add(file);
     }
 
+    /**
+     * Removes from paths array a path of a file that was played already.
+     */
     private void deleteRecord(){
         recordsToPlay.remove(0);
     }
 
+    /**
+     * Returns a name of the owner of the playing record.
+     * @param path owner of the audio that locates on this path.
+     * @return owner name.
+     */
     private String getSenderNameFromAFile(String path){ //path format: <folder name>/filename.wav
         String fileName = path.split("/")[path.split("/").length-1];
         return fileName.substring(String.valueOf(System.currentTimeMillis()).length(), fileName.length()-".wav".length());

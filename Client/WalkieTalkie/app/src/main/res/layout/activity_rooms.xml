@@ -12,14 +12,6 @@
     tools:context="com.example.anita.walkietalkie.RoomsActivity">
 
     <Button
-        android:text="general"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/generalButton" />
-
-    <Button
         android:text="contacts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

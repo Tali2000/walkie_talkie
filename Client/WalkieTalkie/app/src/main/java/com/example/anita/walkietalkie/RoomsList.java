@@ -10,6 +10,10 @@ import android.widget.ListView;
 
 import java.io.IOException;
 
+/**
+ * A class that creates a list with the names of client's rooms.
+ */
+
 public class RoomsList {
     private ListView roomList;
     private ArrayAdapter<String> adapter;

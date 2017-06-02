@@ -1,4 +1,7 @@
 package com.example.anita.walkietalkie;
+/**
+ * A class that builds client's message.
+ */
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -6,13 +9,16 @@ import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class OutPacket implements Closeable {
     private ByteArrayOutputStream m_arrayOut;
     private DataOutputStream m_dataOut;
 
+    /**
+     * Initialize new message and writes message's type.
+     * @param operation message's type.
+     */
     public OutPacket(ClientOperation operation) {
         m_arrayOut = new ByteArrayOutputStream();
         m_dataOut = new DataOutputStream(m_arrayOut);
@@ -73,13 +79,16 @@ public class OutPacket implements Closeable {
         } catch(IOException e){
             e.printStackTrace();
         }
-
     }
 
     public byte[] toByteArray() {
         return m_arrayOut.toByteArray();
     }
 
+    /**
+     * Auto close of the streams.
+     * @throws IOException if not closed.
+     */
     @Override
     public void close() throws IOException {
         m_dataOut.close();

@@ -29,24 +29,6 @@ public class CreateRoomActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_room);
 
-        //spinner initialize
-        spinner = (Spinner)findViewById(R.id.maxTimeSpinner);
-        adapter = ArrayAdapter.createFromResource(this, R.array.maxTime,android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getBaseContext(), parent.getItemAtPosition(position)+" selected", Toast.LENGTH_LONG).show();
-                maxSec = Short.parseShort(parent.getItemAtPosition(position).toString());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
         createRoomButton = (Button)findViewById(R.id.buttonSendCreateRoom);
         createRoomButton.setOnClickListener(this);
 
@@ -69,7 +51,7 @@ public class CreateRoomActivity extends Activity implements View.OnClickListener
                     System.out.println();
                     break;
                 case R.id.buttonSendCreateRoom:
-                    Session.getInstance(activity, handler).CreateRoom(roomName.getText().toString(), maxSec, checkedAnonymousMode);
+                    Session.getInstance(activity, handler).CreateRoom(roomName.getText().toString(), checkedAnonymousMode);
                     break;
             }
         } catch (Exception e) {

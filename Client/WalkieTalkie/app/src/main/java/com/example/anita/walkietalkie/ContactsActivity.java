@@ -1,4 +1,7 @@
 package com.example.anita.walkietalkie;
+/**
+ * A class of an activity that contains the contacts of the client.
+ */
 
 import android.app.Activity;
 import android.content.Intent;
@@ -51,9 +54,6 @@ public class ContactsActivity extends Activity implements OnClickListener {
             switch (v.getId()) {
                 case R.id.addContact:
                     startActivity(new Intent(this, AddContactActivity.class));
-                    break;
-                case R.id.generalButton:
-                    startActivity(new Intent(this, GeneralActivity.class));
                     break;
                 case R.id.roomsButton:
                     startActivity(new Intent(this, RoomsActivity.class));

@@ -1,6 +1,6 @@
 package com.example.anita.walkietalkie;
 
-/*Connection to server class*/
+/*A class that manages the connection to the server*/
 
 import android.app.Activity;
 import android.content.Context;
@@ -54,7 +54,7 @@ public class Session {
                         if (opcode == ServerOperation.DEFAULT)
                             System.out.println("Unhandled operation " + op);
                         opcode.handle(packet, currentActivity, handler);
-                        System.out.println("message from server!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                        System.out.println("message from server");
                     }
 
                 } catch (Exception e) {
@@ -114,10 +114,9 @@ public class Session {
         }
     }
 
-    public void CreateRoom(String roomname, Short maxTime, Boolean anonymousMode) throws IOException {
+    public void CreateRoom(String roomname, Boolean anonymousMode) throws IOException {
         try(OutPacket packet = new OutPacket(ClientOperation.CREATEROOM)){
             packet.writeString(roomname);
-            packet.writeShort(maxTime);
             packet.writeBool(anonymousMode);
             Send(packet);
         }

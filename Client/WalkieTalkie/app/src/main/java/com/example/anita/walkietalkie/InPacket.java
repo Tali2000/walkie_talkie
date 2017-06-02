@@ -1,4 +1,7 @@
 package com.example.anita.walkietalkie;
+/**
+ * A class that parses server's message.
+ */
 
 import java.io.DataInputStream;
 import java.io.InputStream;

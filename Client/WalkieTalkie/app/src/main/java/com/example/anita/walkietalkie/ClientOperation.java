@@ -1,5 +1,8 @@
 package com.example.anita.walkietalkie;
-//TODO
+
+/**
+ * A class of enums with numeration of client's messages to the server.
+ */
 public enum ClientOperation {
     SIGNIN((byte)0),
     SIGNUP((byte)1),
@@ -13,8 +16,7 @@ public enum ClientOperation {
     SENDRECORD((byte)9),
     EXITROOM((byte)12),
     DELETEPARTICIPANT((byte)13),
-    SENDCURRCHAT((byte)14),
-    GET_ABOUT_INFO((byte)16);
+    SENDCURRCHAT((byte)14);
 
     private byte value;
 

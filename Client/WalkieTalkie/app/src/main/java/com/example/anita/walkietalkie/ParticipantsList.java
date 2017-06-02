@@ -6,6 +6,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+/**
+ * A class that creates a list with the names of the participants in the room.
+ */
+
 public class ParticipantsList {
     private ListView participantsList;
     private ArrayAdapter<String> adapter;

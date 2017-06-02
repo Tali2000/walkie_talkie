@@ -1,4 +1,7 @@
 package com.example.anita.walkietalkie;
+/**
+ * A class of enums with numeration of server's messages to the client and treat it.
+ */
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,7 +13,6 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-//TODO show in toast messages
 public enum ServerOperation {
     SIGNIN(0) {
         @Override
@@ -411,20 +413,6 @@ public enum ServerOperation {
             fos.close();
 
             PlayRecordsHelper.getInstance().SetNewRecord(senderName, filePath, RecordsType.CLIENT);
-        }
-    },
-    GET_ABOUT_INFO(16){
-        @Override
-        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
-            final String info = packet.readString();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(activity, InfoActivity.class);
-                    intent.putExtra("INFO", info);
-                    activity.startActivity(intent);
-                }
-            });
         }
     },
     DEFAULT(-1) {

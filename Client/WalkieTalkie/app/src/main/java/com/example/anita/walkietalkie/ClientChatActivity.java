@@ -1,4 +1,7 @@
 package com.example.anita.walkietalkie;
+/**
+ * A class of a private chat.
+ */
 
 import android.Manifest;
 import android.app.Activity;
@@ -127,7 +130,9 @@ public class ClientChatActivity extends AppCompatActivity implements View.OnClic
         }).start();
 
     }
-
+    /**
+     * Initializes the media recorder and starts record
+     */
     private void startRecording() {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -143,7 +148,9 @@ public class ClientChatActivity extends AppCompatActivity implements View.OnClic
 
         mRecorder.start();
     }
-
+    /**
+     * Stops recording.
+     */
     private void stopRecording() {
         mRecorder.stop();
         mRecorder.release();
@@ -187,7 +194,11 @@ public class ClientChatActivity extends AppCompatActivity implements View.OnClic
         }
         if (!permissionToRecordAccepted) finish();
     }
-
+    /**
+     *
+     * @param filePath plays an audio that locates on this path.
+     * @throws Exception if media player doesn't work.
+     */
     public void playAudio(String filePath) throws Exception{
         mPlayer = new MediaPlayer();
         mPlayer.setDataSource(filePath);
@@ -204,17 +215,25 @@ public class ClientChatActivity extends AppCompatActivity implements View.OnClic
             }
         });
     }
-
+    /**
+     * Pauses audio.
+     * @throws Exception - if media player doesn't work.
+     */
     public void pauseAudio() throws Exception{
         mPlayer.pause();
         recordPosition = mPlayer.getCurrentPosition();
     }
-
+    /**
+     * Add a new record's path to paths array.
+     * @param file path to add.
+     */
     public void setNewRecordToPlay(String file){
         //TODO - sound notification
         recordsToPlay.add(file);
     }
-
+    /**
+     * Removes from paths array a path of a file that was played already.
+     */
     private void deleteRecord(){
         recordsToPlay.remove(0);
     }

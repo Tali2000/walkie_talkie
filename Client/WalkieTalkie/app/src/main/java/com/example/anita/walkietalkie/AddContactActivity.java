@@ -1,4 +1,7 @@
 package com.example.anita.walkietalkie;
+/**
+ * A class of an activity that sends to the server a message of adding a contact.
+ */
 
 import android.app.Activity;
 import android.os.Handler;

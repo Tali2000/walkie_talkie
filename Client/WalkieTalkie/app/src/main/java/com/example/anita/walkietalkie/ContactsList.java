@@ -16,6 +16,9 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+/**
+ * A class that creates a list with the names of client's contacts.
+ */
 public class ContactsList {
     private ListView contactList;
     private ArrayAdapter<String> adapter;

@@ -10,6 +10,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * A class of an activity that contains the rooms of the client.
+ */
 public class RoomsActivity extends Activity implements View.OnClickListener {
     Button createRoomButton, generalButton, contactsButton, refreshButton;
 
@@ -49,9 +52,6 @@ public class RoomsActivity extends Activity implements View.OnClickListener {
             switch (v.getId()) {
                 case R.id.createRoomButton:
                     startActivity(new Intent(this, CreateRoomActivity.class));
-                    break;
-                case R.id.generalButton:
-                    startActivity(new Intent(this, GeneralActivity.class));
                     break;
                 case R.id.contactsButton:
                     startActivity(new Intent(this, ContactsActivity.class));

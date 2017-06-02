@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_client_chat"
     android:layout_width="match_parent"
@@ -10,14 +11,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@color/colorBackground"
     tools:context="com.example.anita.walkietalkie.ClientChatActivity">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textViewContactName"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="103dp" />
 
     <TextView
         android:text="Select voice type..."
@@ -36,13 +29,13 @@
         android:layout_alignTop="@+id/textView5"
         android:layout_alignStart="@+id/textViewContactName" />
 
-    <Button
-        android:text="tap and hold to record"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/recordButton"
-        android:layout_marginBottom="14dp"
-        android:layout_above="@+id/textView5"
+        android:id="@+id/textViewContactName"
+        android:layout_marginTop="35dp"
+        android:textSize="36sp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
     <Button
@@ -50,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/buttonPlay"
-        android:layout_marginBottom="11dp"
+        android:layout_marginBottom="83dp"
         android:layout_above="@+id/recordButton"
         android:layout_centerHorizontal="true" />
 
@@ -58,7 +51,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textViewNewRecord"
-        android:layout_above="@+id/buttonPlay"
+        android:layout_below="@+id/textViewContactName"
+        android:layout_toStartOf="@+id/textViewContactName" />
+
+    <Button
+        android:text="tap and hold to record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/recordButton"
+        android:layout_marginBottom="126dp"
+        android:layout_above="@+id/textView5"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

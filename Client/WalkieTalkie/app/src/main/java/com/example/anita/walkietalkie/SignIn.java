@@ -7,13 +7,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * A class of the first activity in the app.
+ * contains sign in and sign up functions.
+ */
 
 public class SignIn extends Activity implements OnClickListener {
     Button signInButton, signUpButton;
     EditText userName, password;
-    TextView messageToClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +30,6 @@ public class SignIn extends Activity implements OnClickListener {
         password = (EditText) findViewById(R.id.password);
         signUpButton.setOnClickListener(this);
         signInButton.setOnClickListener(this);
-        messageToClient = (TextView) findViewById(R.id.messageView);
     }
 
     @Override
