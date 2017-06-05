@@ -321,56 +321,7 @@ public enum ServerOperation {
             PlayRecordsHelper.getInstance().SetNewRecord(roomName, filePath, RecordsType.ROOM);
         }
     },
-    GETDISTORTIONS(11){//TODO
-        @Override
-        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-
-                }
-            });
-        }
-    },
-    EXIT_ROOM(12){
-        @Override
-        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
-            final byte result = packet.readByte();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    switch (result) {
-                        case 0: //success
-                            break;
-                        case 1: //room doesn't exist
-                            break;
-                        case 13: //you are a participant if this room
-                            break;
-                    }
-                }
-            });
-        }
-    },
-    REMOVE_CONTACT(13){
-        @Override
-        public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
-            final byte result = packet.readByte();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    switch (result) {
-                        case 0: //success
-                            break;
-                        case 1: //username doesn't exist
-                            break;
-                        case 11: //not in your contacts
-                            break;
-                    }
-                }
-            });
-        }
-    },
-    SEND_CURR_CHAT(14){
+    SEND_CURR_CHAT(11){
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws IOException, Exception {
             final byte isUser = packet.readByte();
@@ -393,7 +344,7 @@ public enum ServerOperation {
             });
         }
     },
-    GET_CLIENT_RECORD(15){
+    GET_CLIENT_RECORD(12){
         @Override
         public void handle(final InPacket packet, final Activity activity, Handler handler) throws Exception {
             String username = packet.readString();

@@ -38,7 +38,6 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
     private Button addParticipant, recordButton, playButton;
     private EditText newPartiName;
     private ArrayList<String> recordsToPlay; //array of paths with records to play
-    private ImageView recordView, playView;
 
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
@@ -110,20 +109,17 @@ public class RoomChatActivity extends AppCompatActivity implements View.OnClickL
         mFileName += "/walkieTalkie_record.3gp";
 
         //initialize record button
-        recordView = (ImageView) findViewById(R.id.imageViewRecord);
         recordButton = (Button)findViewById(R.id.recordButton);
-        recordView.setOnTouchListener(new View.OnTouchListener(){
+        recordButton.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN){
                     startRecording();
-                    recordView.setImageResource(R.drawable.recorder2);
                     recordButton.setText("recording...");
                     return true;
                 }
                 else if(event.getAction() == MotionEvent.ACTION_UP){
                     stopRecording();
-                    recordView.setImageResource(R.drawable.recorder1);
                     recordButton.setText("tap and hold to record");
                     try{
                         Session.getInstance(activity, handler).SendRecord(mFileName, voiceType, RecordsType.ROOM);

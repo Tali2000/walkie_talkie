@@ -14,9 +14,7 @@ public enum ClientOperation {
     GETROOMS((byte)7),
     GETPARTICIPANTS((byte)8),
     SENDRECORD((byte)9),
-    EXITROOM((byte)12),
-    DELETEPARTICIPANT((byte)13),
-    SENDCURRCHAT((byte)14);
+    SENDCURRCHAT((byte)11);
 
     private byte value;
 
