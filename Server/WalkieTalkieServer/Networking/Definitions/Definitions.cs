@@ -15,11 +15,7 @@ namespace WalkieTalkieServer.Networking.Definitions
         public const ushort max_PasswordLen = 20;
         public const ushort min_RoomnameLen = 4;
         public const ushort max_RoomnameLen = 20;
-        public const ushort min_RecordTime = 10;
-        public const ushort max_RecordTime = 60;
         public const uint max_NumParticipants = 10;     //in each room
-
-        public const string info = "Nice and cool WalkieTalkie app! :)";
     }
 
     public enum DistortionType : byte

@@ -33,13 +33,6 @@ namespace Common.Networking
             return m_buffer[m_position++];
         }
 
-        public sbyte ReadSByte()
-        {
-            if (Remaining < sizeof(sbyte))
-                throw new Exception("Insufficient packet length.");
-            return (sbyte)ReadByte();
-        }
-
         public short ReadShort()
         {
             if (Remaining < sizeof(short))
@@ -64,33 +57,6 @@ namespace Common.Networking
                 throw new Exception("Insufficient packet length.");
             int value = BitConverter.ToInt32(m_buffer, m_position);
             m_position += sizeof(int);
-            return value;
-        }
-
-        public uint ReadUInt()
-        {
-            if (Remaining < sizeof(uint))
-                throw new Exception("Insufficient packet length.");
-            uint value = BitConverter.ToUInt32(m_buffer, m_position);
-            m_position += sizeof(uint);
-            return value;
-        }
-
-        public long ReadLong()
-        {
-            if (Remaining < sizeof(long))
-                throw new Exception("Insufficient packet length.");
-            long value = BitConverter.ToInt64(m_buffer, m_position);
-            m_position += sizeof(long);
-            return value;
-        }
-
-        public ulong ReadULong()
-        {
-            if (Remaining < sizeof(ulong))
-                throw new Exception("Insufficient packet length.");
-            ulong value = BitConverter.ToUInt64(m_buffer, m_position);
-            m_position += sizeof(ulong);
             return value;
         }
 

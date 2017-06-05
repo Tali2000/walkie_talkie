@@ -46,19 +46,5 @@ namespace Data
                 return default(T);
             }
         }
-
-        public object this[string field]
-        {
-            get
-            {
-                return m_reader[field];
-            }
-        }
-
-        public bool IsNullOrEmpty(string field)
-        {
-            object value = m_reader[field];
-            return value == null || value is DBNull || !(value is string) || ((string)value).Length == 0;
-        }
     }
 }

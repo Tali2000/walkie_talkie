@@ -49,21 +49,6 @@ namespace WalkieTalkieServer
             else
                 outP.WriteByte((byte)ResponseType.WRONG_DETAILS);
             s.Send(outP);
-            s.Send(SendDistortion());
-        }
-
-        // Used only in SignIn function
-        // Sends all the distortion types
-        private static OutPacket SendDistortion()
-        {
-            OutPacket outP = new OutPacket(ServerOperation.SEND_DISTORTIONS);
-            outP.WriteByte((byte)Enum.GetValues(typeof(DistortionType)).Length);
-            foreach(string distortion in Enum.GetNames(typeof(DistortionType)))
-            {
-                outP.WriteShort((short)distortion.Length);
-                outP.WriteString(distortion);
-            }
-            return outP;
         }
 
         public static void SignUp(Session s, InPacket p)
@@ -139,13 +124,6 @@ namespace WalkieTalkieServer
                     s.Send(outP);
                     return;
                 }
-            // Checks whether the max record time is valid
-            if (!Validator.IsValidRecordTime(maxRecordTime))
-            {
-                outP.WriteByte((byte)ResponseType.INVALID_TIME);
-                s.Send(outP);
-                return;
-            }
             // Checks whether room's name is valid
             if (Validator.IsValidRoomname(roomname))
             {
@@ -369,70 +347,6 @@ namespace WalkieTalkieServer
             return Program.Server.GetClientByDBid(client.CurrContactId).GetSession().Send(outP);
         }
 
-        public static void ExitRoom(Session s, InPacket p)
-        {
-            string roomname = p.ReadString();
-            Client client = Program.Server.GetClient(s.Id);
-            OutPacket outP = new OutPacket(ServerOperation.EXIT_ROOM);
-
-            long roomId;
-            // Checks whether such room exists
-            using (Query query = client.ExecuteQuery($"SELECT id FROM rooms WHERE roomname='{roomname}';"))
-            {
-                if (!query.NextRow())
-                {
-                    outP.WriteByte((byte)ResponseType.DOESNT_EXIST);
-                    s.Send(outP);
-                    return;
-                }
-                roomId = query.Get<long>("id");
-            }
-            // Checks whether the client is a participant of the room
-            using (Query query = client.ExecuteQuery($"SELECT * FROM participants WHERE roomID={roomId} AND participantID={client.Id};"))
-                if(!query.NextRow())
-                {
-                    outP.WriteByte((byte)ResponseType.NOT_PARTICIPANT_OF_ROOM);
-                    s.Send(outP);
-                    return;
-                }
-
-            client.ExecuteNonQuery($"DELETE FROM participants WHERE roomID={roomId} AND participantID={client.Id};");
-            outP.WriteByte((byte)ResponseType.SUCCESS);
-            s.Send(outP);
-        }
-
-        public static void RemoveContact(Session s, InPacket p)
-        {
-            string contact = p.ReadString();
-            Client client = Program.Server.GetClient(s.Id);
-            OutPacket outP = new OutPacket(ServerOperation.REMOVE_CONTACT);
-
-            long contactId;
-            // Checks whether the contact exists as a user
-            using (Query query = client.ExecuteQuery($"SELECT id FROM users WHERE username='{contact}';"))
-            {
-                if (!query.NextRow())
-                {
-                    outP.WriteByte((byte)ResponseType.DOESNT_EXIST);
-                    s.Send(outP);
-                    return;
-                }
-                contactId = query.Get<long>("id");
-            }
-            // Checks whether the user is in your contacts
-            using (Query query = client.ExecuteQuery($"SELECT * FROM contacts WHERE userID={client.Id} AND contactID={contactId};"))
-                if(query.NextRow())
-                {
-                    outP.WriteByte((byte)ResponseType.NOT_IN_CONTACTS);
-                    s.Send(outP);
-                    return;
-                }
-
-            client.ExecuteNonQuery($"DELETE FROM contacts WHERE userID={client.Id} AND contactID={contactId};");
-            outP.WriteByte((byte)ResponseType.SUCCESS);
-            s.Send(outP);
-        }
-
         public static void SetCurrentContact(Session s, InPacket p)
         {
             string contact = p.ReadString();
@@ -462,14 +376,6 @@ namespace WalkieTalkieServer
                 }
                 else
                     outP.WriteByte((byte)ResponseType.NOT_IN_CONTACTS);
-            s.Send(outP);
-        }
-
-        public static void SendInfo(Session s, InPacket p)
-        {
-            Client client = Program.Server.GetClient(s.Id);
-            OutPacket outP = new OutPacket(ServerOperation.INFO);
-            outP.WriteString(Definitions.info);
             s.Send(outP);
         }
 

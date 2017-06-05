@@ -94,10 +94,7 @@ namespace WalkieTalkieServer
             handlers.Add(ClientOperation.GET_ROOMS, OperationHandlers.SendRooms);
             handlers.Add(ClientOperation.GET_PARTICIPANTS, OperationHandlers.SendParticipants);
             handlers.Add(ClientOperation.SEND_VOICE_MESSAGE, OperationHandlers.VoiceMessage);
-            handlers.Add(ClientOperation.EXIT_ROOM, OperationHandlers.ExitRoom);
-            handlers.Add(ClientOperation.REMOVE_CONTACT, OperationHandlers.RemoveContact);
             handlers.Add(ClientOperation.CURRENT_CONTACT, OperationHandlers.SetCurrentContact);
-            handlers.Add(ClientOperation.INFO, OperationHandlers.SendInfo);
         }
     }
 }

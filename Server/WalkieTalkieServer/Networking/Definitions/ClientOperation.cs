@@ -17,9 +17,6 @@ namespace Common.Networking.Definitions
         GET_ROOMS,
         GET_PARTICIPANTS,
         SEND_VOICE_MESSAGE,
-        EXIT_ROOM = 12,
-        REMOVE_CONTACT,
-        CURRENT_CONTACT,
-        INFO = 16
+        CURRENT_CONTACT = 11
     }
 }

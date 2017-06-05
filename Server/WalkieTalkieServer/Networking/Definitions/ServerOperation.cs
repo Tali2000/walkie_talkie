@@ -18,12 +18,8 @@ namespace Common.Networking.Definitions
         GET_PARTICIPANTS,
         VOICE_MESSAGE,
         SEND_VOICE_MESSAGE_IN_ROOM,
-        SEND_DISTORTIONS,
-        EXIT_ROOM,
-        REMOVE_CONTACT,
         CURRENT_CONTACT,
-        SEND_VOICE_MESSAGE_TO_CONTACT,
-        INFO
+        SEND_VOICE_MESSAGE_TO_CONTACT
     }
 
     public enum ResponseType : byte
@@ -42,8 +38,7 @@ namespace Common.Networking.Definitions
         NOT_IN_CONTACTS,
         ALREADY_ENTERED,
         NOT_PARTICIPANT_OF_ROOM,
-        INVALID_TIME,
-        FULL_ROOM,
+        FULL_ROOM = 15,
         CANNOT_DETERMINE_CHAT_TYPE
     }
 }

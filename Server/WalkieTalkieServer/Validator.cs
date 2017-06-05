@@ -30,10 +30,5 @@ namespace WalkieTalkieServer
             return (toCheck.Length >= minLen && toCheck.Length <= maxLen &&
                 !rgx.IsMatch(toCheck));
         }
-
-        public static bool IsValidRecordTime(short time)
-        {
-            return (time >= Definitions.min_RecordTime && time <= Definitions.max_RecordTime);
-        }
     }
 }

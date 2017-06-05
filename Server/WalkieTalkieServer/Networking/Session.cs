@@ -28,31 +28,6 @@ namespace Common.Networking
             m_lastConnectedId = 0;
         }
 
-        ~Session()
-        {
-            m_socket.Close();
-        }
-
-        public bool Connect(string ip, ushort host)
-        {
-            if (m_socket != null && m_socket.Connected)
-                throw new Exception("Socket is already connected.");
-            m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            m_ip = ip;
-            m_host = host;
-            try
-            {
-                m_socket.Connect(new IPEndPoint(IPAddress.Parse(ip), host));
-                return BeginReceive();
-            }
-            catch
-            {
-                m_socket.Dispose();
-                OnDisconnection(this);
-            }
-            return false;
-        }
-
         public bool Listen(ushort port)
         {
             if (m_socket != null && m_socket.Connected)
@@ -69,12 +44,6 @@ namespace Common.Networking
                 m_socket.Dispose();
             }
             return false;
-        }
-
-        public void Stop()
-        {
-            m_socket.Close();
-            m_socket.Dispose();
         }
 
         public bool Send(byte[] buffer)
