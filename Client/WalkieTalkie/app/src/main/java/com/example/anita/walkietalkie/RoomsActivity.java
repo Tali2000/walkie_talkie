@@ -24,9 +24,6 @@ public class RoomsActivity extends Activity implements View.OnClickListener {
         createRoomButton = (Button) findViewById(R.id.createRoomButton);
         createRoomButton.setOnClickListener(this);
 
-        generalButton = (Button) findViewById(R.id.generalButton);
-        generalButton.setOnClickListener(this);
-
         contactsButton = (Button) findViewById(R.id.contactsButton);
         contactsButton.setOnClickListener(this);
 

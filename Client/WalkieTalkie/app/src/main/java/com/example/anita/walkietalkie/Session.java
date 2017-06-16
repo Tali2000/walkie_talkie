@@ -12,7 +12,7 @@ import java.net.Socket;
 
 public class Session {
     private static Session instance;
-    private static final String address = "192.168.1.24";
+    private static final String address = "192.168.43.20";
     private static final int port = 4242;
     private Socket socket;
     private Activity currentActivity;
@@ -154,12 +154,6 @@ public class Session {
             packet.writeByte(chatType.getValue());
             packet.writeByte(voiceType);
             packet.writeFile(filePath);
-            Send(packet);
-        }
-    }
-
-    public void GetAboutInfo() throws IOException{
-        try(OutPacket packet = new OutPacket(ClientOperation.GET_ABOUT_INFO)){
             Send(packet);
         }
     }
